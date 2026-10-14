@@ -1,0 +1,62 @@
+{
+ "Name": "Home Assistant",
+ "Author": "Christoph Giesche",
+ "Version": "3.8.4.66",
+ "Icon": "images/plugin/plugin",
+ "OS": [
+  {
+   "Platform": "mac",
+   "MinimumVersion": "10.11"
+  },
+  {
+   "Platform": "windows",
+   "MinimumVersion": "10"
+  }
+ ],
+ "Category": "Home Assistant",
+ "CodePath": "plugin.html",
+ "Actions": [
+  {
+   "Name": "Entity (generic)",
+   "UUID": "de.perdoctus.streamdeck.homeassistant.entity",
+   "Icon": "images/actionImage",
+   "Controllers": [
+    "Keypad",
+    "Encoder"
+   ],
+   "States": [
+    {
+     "Image": "images/ha-button",
+     "TitleAlignment": "bottom",
+     "FontSize": 9
+    }
+   ],
+   "PropertyInspectorPath": "pi.html",
+   "SupportedInMultiActions": true,
+   "Encoder": {
+    "layout": "$A0",
+    "StackColor": "#AABBCC"
+   }
+  },
+  {
+   "Name": "Entity (custom icons)",
+   "UUID": "de.perdoctus.streamdeck.homeassistant.dual-state-entity",
+   "Icon": "images/actionImage",
+   "States": [
+    {
+     "Image": "images/ha-button-off",
+     "TitleAlignment": "bottom",
+     "FontSize": 9
+    },
+    {
+     "Image": "images/ha-button-on",
+     "TitleAlignment": "bottom",
+     "FontSize": 9
+    }
+   ],
+   "PropertyInspectorPath": "pi.html",
+   "SupportedInMultiActions": true,
+   "DisableAutomaticStates": true
+  }
+ ]
+}

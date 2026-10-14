@@ -1,0 +1,37 @@
+{
+ "Name": "Ulanzi D200X / D200H",
+ "Author": "Ulanzi Deck Linux",
+ "Version": "1.2.2",
+ "Icon": "assets/icon",
+ "OS": [
+  {
+   "Platform": "linux"
+  },
+  {
+   "Platform": "windows",
+   "MinimumVersion": "10"
+  }
+ ],
+ "Category": "Ulanzi D200",
+ "DeviceNamespace": "ul",
+ "CodePath": "plugin.html",
+ "Actions": [
+  {
+   "Name": "Wide screen",
+   "UUID": "com.ulanzi.d200x.widescreen",
+   "Icon": "assets/widescreen",
+   "Tooltip": "Choose what the double-width screen shows (clock, system monitor or nothing) and which D200 model this is",
+   "Controllers": [
+    "Keypad"
+   ],
+   "States": [
+    {
+     "Image": "assets/widescreen",
+     "ShowTitle": false
+    }
+   ],
+   "PropertyInspectorPath": "propertyInspector/widescreen.html",
+   "SupportedInMultiActions": false
+  }
+ ]
+}

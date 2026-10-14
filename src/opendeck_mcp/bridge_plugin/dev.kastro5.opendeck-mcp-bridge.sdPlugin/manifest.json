@@ -1,0 +1,14 @@
+{
+	"Name": "OpenDeck MCP Bridge",
+	"Author": "kastro5",
+	"Version": "__BRIDGE_VERSION__",
+	"Description": "Records connected device geometry for opendeck-mcp. Has no actions.",
+	"Icon": "icon",
+	"Category": "OpenDeck MCP",
+	"URL": "https://github.com/kastro5/opendeck-mcp",
+	"Actions": [],
+	"CodePath": "index.html",
+	"SDKVersion": 2,
+	"OS": [{ "Platform": "windows" }, { "Platform": "mac" }, { "Platform": "linux" }],
+	"Software": { "MinimumVersion": "6.0" }
+}

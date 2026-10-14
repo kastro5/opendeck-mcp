@@ -1,0 +1,688 @@
+{
+  "infobars": [],
+  "keys": [
+    {
+      "action": {
+        "controllers": [
+          "Keypad"
+        ],
+        "disable_automatic_states": false,
+        "encoder": null,
+        "icon": "opendeck/multi-action.png",
+        "name": "Multi Action",
+        "plugin": "opendeck",
+        "property_inspector": "",
+        "states": [
+          {
+            "alignment": "middle",
+            "background_colour": "#000000",
+            "colour": "#FFFFFF",
+            "family": "Liberation Sans",
+            "image": "opendeck/multi-action.png",
+            "image_scale": 100,
+            "name": "",
+            "show": true,
+            "size": 16,
+            "stroke_colour": "#000000",
+            "stroke_size": 3,
+            "style": "Regular",
+            "text": "",
+            "underline": false
+          }
+        ],
+        "supported_in_multi_actions": false,
+        "tooltip": "Execute multiple actions",
+        "uuid": "opendeck.multiaction",
+        "visible_in_action_list": true
+      },
+      "children": [
+        {
+          "action": {
+            "controllers": [
+              "Keypad",
+              "Encoder"
+            ],
+            "disable_automatic_states": false,
+            "encoder": null,
+            "icon": "plugins/com.amansprojects.starterpack.sdPlugin/icons/openUrl.png",
+            "name": "Open URL",
+            "plugin": "com.amansprojects.starterpack.sdPlugin",
+            "property_inspector": "plugins/com.amansprojects.starterpack.sdPlugin/propertyInspector/openUrl.html",
+            "states": [
+              {
+                "alignment": "middle",
+                "background_colour": "#000000",
+                "colour": "#FFFFFF",
+                "family": "Liberation Sans",
+                "image": "plugins/com.amansprojects.starterpack.sdPlugin/icons/openUrl.png",
+                "image_scale": 100,
+                "name": "",
+                "show": true,
+                "size": 16,
+                "stroke_colour": "#000000",
+                "stroke_size": 3,
+                "style": "Regular",
+                "text": "",
+                "underline": false
+              }
+            ],
+            "supported_in_multi_actions": true,
+            "tooltip": "Open a URL",
+            "uuid": "com.amansprojects.starterpack.openurl",
+            "visible_in_action_list": true
+          },
+          "children": null,
+          "context": "Keypad.0.1",
+          "current_state": 0,
+          "settings": {},
+          "states": [
+            {
+              "alignment": "middle",
+              "background_colour": "#000000",
+              "colour": "#FFFFFF",
+              "family": "Liberation Sans",
+              "image": "plugins/com.amansprojects.starterpack.sdPlugin/icons/openUrl.png",
+              "image_scale": 100,
+              "name": "",
+              "show": true,
+              "size": 16,
+              "stroke_colour": "#000000",
+              "stroke_size": 3,
+              "style": "Regular",
+              "text": "",
+              "underline": false
+            }
+          ]
+        },
+        {
+          "action": {
+            "controllers": [
+              "Keypad",
+              "Encoder"
+            ],
+            "disable_automatic_states": false,
+            "encoder": null,
+            "icon": "plugins/com.amansprojects.starterpack.sdPlugin/icons/deviceBrightness.png",
+            "name": "Device Brightness",
+            "plugin": "com.amansprojects.starterpack.sdPlugin",
+            "property_inspector": "plugins/com.amansprojects.starterpack.sdPlugin/propertyInspector/deviceBrightness.html",
+            "states": [
+              {
+                "alignment": "middle",
+                "background_colour": "#000000",
+                "colour": "#FFFFFF",
+                "family": "Liberation Sans",
+                "image": "plugins/com.amansprojects.starterpack.sdPlugin/icons/deviceBrightness.png",
+                "image_scale": 100,
+                "name": "",
+                "show": true,
+                "size": 16,
+                "stroke_colour": "#000000",
+                "stroke_size": 3,
+                "style": "Regular",
+                "text": "",
+                "underline": false
+              }
+            ],
+            "supported_in_multi_actions": true,
+            "tooltip": "Change the device brightness",
+            "uuid": "com.amansprojects.starterpack.devicebrightness",
+            "visible_in_action_list": true
+          },
+          "children": null,
+          "context": "Keypad.0.2",
+          "current_state": 0,
+          "settings": {},
+          "states": [
+            {
+              "alignment": "middle",
+              "background_colour": "#000000",
+              "colour": "#FFFFFF",
+              "family": "Liberation Sans",
+              "image": "plugins/com.amansprojects.starterpack.sdPlugin/icons/deviceBrightness.png",
+              "image_scale": 100,
+              "name": "",
+              "show": true,
+              "size": 16,
+              "stroke_colour": "#000000",
+              "stroke_size": 3,
+              "style": "Regular",
+              "text": "",
+              "underline": false
+            }
+          ]
+        }
+      ],
+      "context": "Keypad.0.0",
+      "current_state": 0,
+      "settings": {},
+      "states": [
+        {
+          "alignment": "middle",
+          "background_colour": "#000000",
+          "colour": "#FFFFFF",
+          "family": "Liberation Sans",
+          "image": "opendeck/multi-action.png",
+          "image_scale": 100,
+          "name": "",
+          "show": true,
+          "size": 16,
+          "stroke_colour": "#000000",
+          "stroke_size": 3,
+          "style": "Regular",
+          "text": "",
+          "underline": false
+        }
+      ]
+    },
+    null,
+    {
+      "action": {
+        "controllers": [
+          "Keypad"
+        ],
+        "disable_automatic_states": false,
+        "encoder": null,
+        "icon": "opendeck/toggle-action.png",
+        "name": "Toggle Action",
+        "plugin": "opendeck",
+        "property_inspector": "",
+        "states": [
+          {
+            "alignment": "middle",
+            "background_colour": "#000000",
+            "colour": "#FFFFFF",
+            "family": "Liberation Sans",
+            "image": "opendeck/toggle-action.png",
+            "image_scale": 100,
+            "name": "",
+            "show": true,
+            "size": 16,
+            "stroke_colour": "#000000",
+            "stroke_size": 3,
+            "style": "Regular",
+            "text": "",
+            "underline": false
+          }
+        ],
+        "supported_in_multi_actions": false,
+        "tooltip": "Cycle through multiple actions",
+        "uuid": "opendeck.toggleaction",
+        "visible_in_action_list": true
+      },
+      "children": [
+        {
+          "action": {
+            "controllers": [
+              "Keypad",
+              "Encoder"
+            ],
+            "disable_automatic_states": false,
+            "encoder": null,
+            "icon": "plugins/com.amansprojects.starterpack.sdPlugin/icons/openUrl.png",
+            "name": "Open URL",
+            "plugin": "com.amansprojects.starterpack.sdPlugin",
+            "property_inspector": "plugins/com.amansprojects.starterpack.sdPlugin/propertyInspector/openUrl.html",
+            "states": [
+              {
+                "alignment": "middle",
+                "background_colour": "#000000",
+                "colour": "#FFFFFF",
+                "family": "Liberation Sans",
+                "image": "plugins/com.amansprojects.starterpack.sdPlugin/icons/openUrl.png",
+                "image_scale": 100,
+                "name": "",
+                "show": true,
+                "size": 16,
+                "stroke_colour": "#000000",
+                "stroke_size": 3,
+                "style": "Regular",
+                "text": "",
+                "underline": false
+              }
+            ],
+            "supported_in_multi_actions": true,
+            "tooltip": "Open a URL",
+            "uuid": "com.amansprojects.starterpack.openurl",
+            "visible_in_action_list": true
+          },
+          "children": null,
+          "context": "Keypad.2.1",
+          "current_state": 0,
+          "settings": {},
+          "states": [
+            {
+              "alignment": "middle",
+              "background_colour": "#000000",
+              "colour": "#FFFFFF",
+              "family": "Liberation Sans",
+              "image": "plugins/com.amansprojects.starterpack.sdPlugin/icons/openUrl.png",
+              "image_scale": 100,
+              "name": "",
+              "show": true,
+              "size": 16,
+              "stroke_colour": "#000000",
+              "stroke_size": 3,
+              "style": "Regular",
+              "text": "",
+              "underline": false
+            }
+          ]
+        },
+        {
+          "action": {
+            "controllers": [
+              "Keypad",
+              "Encoder"
+            ],
+            "disable_automatic_states": false,
+            "encoder": null,
+            "icon": "plugins/com.amansprojects.starterpack.sdPlugin/icons/inputSimulation.png",
+            "name": "Simulate Input",
+            "plugin": "com.amansprojects.starterpack.sdPlugin",
+            "property_inspector": "plugins/com.amansprojects.starterpack.sdPlugin/propertyInspector/inputSimulation.html",
+            "states": [
+              {
+                "alignment": "middle",
+                "background_colour": "#000000",
+                "colour": "#FFFFFF",
+                "family": "Liberation Sans",
+                "image": "plugins/com.amansprojects.starterpack.sdPlugin/icons/inputSimulation.png",
+                "image_scale": 100,
+                "name": "",
+                "show": true,
+                "size": 16,
+                "stroke_colour": "#000000",
+                "stroke_size": 3,
+                "style": "Regular",
+                "text": "",
+                "underline": false
+              }
+            ],
+            "supported_in_multi_actions": true,
+            "tooltip": "Simulate mouse or keyboard input",
+            "uuid": "com.amansprojects.starterpack.inputsimulation",
+            "visible_in_action_list": true
+          },
+          "children": null,
+          "context": "Keypad.2.2",
+          "current_state": 0,
+          "settings": {},
+          "states": [
+            {
+              "alignment": "middle",
+              "background_colour": "#000000",
+              "colour": "#FFFFFF",
+              "family": "Liberation Sans",
+              "image": "plugins/com.amansprojects.starterpack.sdPlugin/icons/inputSimulation.png",
+              "image_scale": 100,
+              "name": "",
+              "show": true,
+              "size": 16,
+              "stroke_colour": "#000000",
+              "stroke_size": 3,
+              "style": "Regular",
+              "text": "",
+              "underline": false
+            }
+          ]
+        }
+      ],
+      "context": "Keypad.2.0",
+      "current_state": 0,
+      "settings": {},
+      "states": [
+        {
+          "alignment": "middle",
+          "background_colour": "#000000",
+          "colour": "#FFFFFF",
+          "family": "Liberation Sans",
+          "image": "opendeck/toggle-action.png",
+          "image_scale": 100,
+          "name": "",
+          "show": true,
+          "size": 16,
+          "stroke_colour": "#000000",
+          "stroke_size": 3,
+          "style": "Regular",
+          "text": "",
+          "underline": false
+        },
+        {
+          "alignment": "middle",
+          "background_colour": "#000000",
+          "colour": "#FFFFFF",
+          "family": "Liberation Sans",
+          "image": "opendeck/toggle-action.png",
+          "image_scale": 100,
+          "name": "",
+          "show": true,
+          "size": 16,
+          "stroke_colour": "#000000",
+          "stroke_size": 3,
+          "style": "Regular",
+          "text": "",
+          "underline": false
+        }
+      ]
+    },
+    null,
+    null,
+    null,
+    {
+      "action": {
+        "controllers": [
+          "Keypad"
+        ],
+        "disable_automatic_states": true,
+        "encoder": null,
+        "icon": "plugins/de.perdoctus.streamdeck.homeassistant.sdPlugin/images/actionImage@2x.png",
+        "name": "Entity (custom icons)",
+        "plugin": "de.perdoctus.streamdeck.homeassistant.sdPlugin",
+        "property_inspector": "plugins/de.perdoctus.streamdeck.homeassistant.sdPlugin/pi.html",
+        "states": [
+          {
+            "alignment": "bottom",
+            "background_colour": "#000000",
+            "colour": "#FFFFFF",
+            "family": "Liberation Sans",
+            "image": "plugins/de.perdoctus.streamdeck.homeassistant.sdPlugin/images/ha-button-off@2x.png",
+            "image_scale": 100,
+            "name": "",
+            "show": true,
+            "size": 9,
+            "stroke_colour": "#000000",
+            "stroke_size": 3,
+            "style": "Regular",
+            "text": "",
+            "underline": false
+          },
+          {
+            "alignment": "bottom",
+            "background_colour": "#000000",
+            "colour": "#FFFFFF",
+            "family": "Liberation Sans",
+            "image": "plugins/de.perdoctus.streamdeck.homeassistant.sdPlugin/images/ha-button-on@2x.png",
+            "image_scale": 100,
+            "name": "",
+            "show": true,
+            "size": 9,
+            "stroke_colour": "#000000",
+            "stroke_size": 3,
+            "style": "Regular",
+            "text": "",
+            "underline": false
+          }
+        ],
+        "supported_in_multi_actions": true,
+        "tooltip": "",
+        "uuid": "de.perdoctus.streamdeck.homeassistant.dual-state-entity",
+        "visible_in_action_list": true
+      },
+      "children": null,
+      "context": "Keypad.6.0",
+      "current_state": 0,
+      "settings": {
+        "button": {
+          "serviceLongPress": {
+            "entityId": "",
+            "serviceData": "",
+            "serviceId": ""
+          },
+          "serviceRotation": {
+            "entityId": "",
+            "serviceData": "",
+            "serviceId": ""
+          },
+          "serviceShortPress": {
+            "entityId": "<entityId>",
+            "serviceData": "",
+            "serviceId": "<serviceId>"
+          },
+          "serviceTap": {
+            "entityId": "",
+            "serviceData": "",
+            "serviceId": ""
+          }
+        },
+        "controllerType": "<controllerType>",
+        "display": {
+          "backgroundColor": "",
+          "backgroundColorEnd": "",
+          "buttonTitle": "<buttonTitle>",
+          "enableServiceIndicator": true,
+          "entityId": "<entityId>",
+          "iconLayout": "<iconLayout>",
+          "iconSettings": "<iconSettings>",
+          "labelFontSize": 48,
+          "useStateImagesForOnOffStates": true
+        },
+        "rotationTickBucketSizeMs": 300,
+        "rotationTickMultiplier": 1,
+        "version": 8
+      },
+      "states": [
+        {
+          "alignment": "bottom",
+          "background_colour": "#000000",
+          "colour": "#FFFFFF",
+          "family": "Liberation Sans",
+          "image": "plugins/de.perdoctus.streamdeck.homeassistant.sdPlugin/images/ha-button-off@2x.png",
+          "image_scale": 100,
+          "name": "",
+          "show": true,
+          "size": 9,
+          "stroke_colour": "#000000",
+          "stroke_size": 3,
+          "style": "Regular",
+          "text": "",
+          "underline": false
+        },
+        {
+          "alignment": "bottom",
+          "background_colour": "#000000",
+          "colour": "#FFFFFF",
+          "family": "Liberation Sans",
+          "image": "plugins/de.perdoctus.streamdeck.homeassistant.sdPlugin/images/ha-button-on@2x.png",
+          "image_scale": 100,
+          "name": "",
+          "show": true,
+          "size": 9,
+          "stroke_colour": "#000000",
+          "stroke_size": 3,
+          "style": "Regular",
+          "text": "",
+          "underline": false
+        }
+      ]
+    },
+    null,
+    {
+      "action": {
+        "controllers": [
+          "Keypad",
+          "Encoder"
+        ],
+        "disable_automatic_states": false,
+        "encoder": null,
+        "icon": "plugins/com.amansprojects.starterpack.sdPlugin/icons/switchProfile.png",
+        "name": "Switch Profile",
+        "plugin": "com.amansprojects.starterpack.sdPlugin",
+        "property_inspector": "plugins/com.amansprojects.starterpack.sdPlugin/propertyInspector/switchProfile.html",
+        "states": [
+          {
+            "alignment": "middle",
+            "background_colour": "#000000",
+            "colour": "#FFFFFF",
+            "family": "Liberation Sans",
+            "image": "plugins/com.amansprojects.starterpack.sdPlugin/icons/switchProfile.png",
+            "image_scale": 100,
+            "name": "",
+            "show": true,
+            "size": 16,
+            "stroke_colour": "#000000",
+            "stroke_size": 3,
+            "style": "Regular",
+            "text": "",
+            "underline": false
+          }
+        ],
+        "supported_in_multi_actions": true,
+        "tooltip": "Switch the selected profile",
+        "uuid": "com.amansprojects.starterpack.switchprofile",
+        "visible_in_action_list": true
+      },
+      "children": null,
+      "context": "Keypad.8.0",
+      "current_state": 0,
+      "settings": {},
+      "states": [
+        {
+          "alignment": "middle",
+          "background_colour": "#000000",
+          "colour": "#FFFFFF",
+          "family": "Liberation Sans",
+          "image": "plugins/com.amansprojects.starterpack.sdPlugin/icons/switchProfile.png",
+          "image_scale": 100,
+          "name": "",
+          "show": true,
+          "size": 16,
+          "stroke_colour": "#000000",
+          "stroke_size": 3,
+          "style": "Regular",
+          "text": "",
+          "underline": false
+        }
+      ]
+    },
+    null,
+    {
+      "action": {
+        "controllers": [
+          "Keypad",
+          "Encoder"
+        ],
+        "disable_automatic_states": false,
+        "encoder": null,
+        "icon": "plugins/com.amansprojects.starterpack.sdPlugin/icons/deviceBrightness.png",
+        "name": "Device Brightness",
+        "plugin": "com.amansprojects.starterpack.sdPlugin",
+        "property_inspector": "plugins/com.amansprojects.starterpack.sdPlugin/propertyInspector/deviceBrightness.html",
+        "states": [
+          {
+            "alignment": "middle",
+            "background_colour": "#000000",
+            "colour": "#FFFFFF",
+            "family": "Liberation Sans",
+            "image": "plugins/com.amansprojects.starterpack.sdPlugin/icons/deviceBrightness.png",
+            "image_scale": 100,
+            "name": "",
+            "show": true,
+            "size": 16,
+            "stroke_colour": "#000000",
+            "stroke_size": 3,
+            "style": "Regular",
+            "text": "",
+            "underline": false
+          }
+        ],
+        "supported_in_multi_actions": true,
+        "tooltip": "Change the device brightness",
+        "uuid": "com.amansprojects.starterpack.devicebrightness",
+        "visible_in_action_list": true
+      },
+      "children": null,
+      "context": "Keypad.10.0",
+      "current_state": 0,
+      "settings": {
+        "action": "<action>",
+        "value": 35
+      },
+      "states": [
+        {
+          "alignment": "middle",
+          "background_colour": "#000000",
+          "colour": "#FFFFFF",
+          "family": "Liberation Sans",
+          "image": "plugins/com.amansprojects.starterpack.sdPlugin/icons/deviceBrightness.png",
+          "image_scale": 100,
+          "name": "",
+          "show": true,
+          "size": 16,
+          "stroke_colour": "#000000",
+          "stroke_size": 3,
+          "style": "Regular",
+          "text": "",
+          "underline": false
+        }
+      ]
+    },
+    null,
+    {
+      "action": {
+        "controllers": [
+          "Keypad",
+          "Encoder"
+        ],
+        "disable_automatic_states": false,
+        "encoder": null,
+        "icon": "plugins/com.amansprojects.starterpack.sdPlugin/icons/openUrl.png",
+        "name": "Open URL",
+        "plugin": "com.amansprojects.starterpack.sdPlugin",
+        "property_inspector": "plugins/com.amansprojects.starterpack.sdPlugin/propertyInspector/openUrl.html",
+        "states": [
+          {
+            "alignment": "middle",
+            "background_colour": "#000000",
+            "colour": "#FFFFFF",
+            "family": "Liberation Sans",
+            "image": "plugins/com.amansprojects.starterpack.sdPlugin/icons/openUrl.png",
+            "image_scale": 100,
+            "name": "",
+            "show": true,
+            "size": 16,
+            "stroke_colour": "#000000",
+            "stroke_size": 3,
+            "style": "Regular",
+            "text": "",
+            "underline": false
+          }
+        ],
+        "supported_in_multi_actions": true,
+        "tooltip": "Open a URL",
+        "uuid": "com.amansprojects.starterpack.openurl",
+        "visible_in_action_list": true
+      },
+      "children": null,
+      "context": "Keypad.12.0",
+      "current_state": 0,
+      "settings": {
+        "anticlockwise": "",
+        "clockwise": "",
+        "down": "https://example.com/down",
+        "up": ""
+      },
+      "states": [
+        {
+          "alignment": "top",
+          "background_colour": "#b73838",
+          "colour": "#c02121",
+          "family": "Archivo Black",
+          "image": "0.png",
+          "image_scale": 100,
+          "name": "",
+          "show": true,
+          "size": 18,
+          "stroke_colour": "#000000",
+          "stroke_size": 3,
+          "style": "Bold Italic",
+          "text": "rew",
+          "underline": true
+        }
+      ]
+    },
+    null,
+    null
+  ],
+  "sliders": []
+}

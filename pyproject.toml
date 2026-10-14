@@ -1,0 +1,40 @@
+[project]
+name = "opendeck-mcp"
+version = "0.1.0"
+description = "MCP server for configuring OpenDeck (open-source Stream Deck software) in natural language"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.11"
+authors = [{ name = "kastro5" }]
+dependencies = [
+    "mcp==2.2.0",
+    "httpx==0.28.1",
+    "psutil==7.2.2",
+    "platformdirs==4.12.2",
+    "pillow==12.3.0",
+]
+
+[project.scripts]
+opendeck-mcp = "opendeck_mcp.__main__:main"
+
+[dependency-groups]
+dev = ["pytest==9.1.1", "ruff==0.16.9"]
+
+[build-system]
+requires = ["hatchling==1.32.4"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/opendeck_mcp"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+ignore = ["E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["live: touches the real OpenDeck install (opt-in)"]

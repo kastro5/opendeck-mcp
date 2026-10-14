@@ -1,0 +1,145 @@
+{
+  "infobars": [],
+  "keys": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    {
+      "action": {
+        "controllers": [
+          "Keypad",
+          "Encoder"
+        ],
+        "disable_automatic_states": false,
+        "encoder": null,
+        "icon": "plugins/com.amansprojects.starterpack.sdPlugin/icons/openUrl.png",
+        "name": "Open URL",
+        "plugin": "com.amansprojects.starterpack.sdPlugin",
+        "property_inspector": "plugins/com.amansprojects.starterpack.sdPlugin/propertyInspector/openUrl.html",
+        "states": [
+          {
+            "alignment": "middle",
+            "background_colour": "#000000",
+            "colour": "#FFFFFF",
+            "family": "Liberation Sans",
+            "image": "plugins/com.amansprojects.starterpack.sdPlugin/icons/openUrl.png",
+            "image_scale": 100,
+            "name": "",
+            "show": true,
+            "size": 16,
+            "stroke_colour": "#000000",
+            "stroke_size": 3,
+            "style": "Regular",
+            "text": "",
+            "underline": false
+          }
+        ],
+        "supported_in_multi_actions": true,
+        "tooltip": "Open a URL",
+        "uuid": "com.amansprojects.starterpack.openurl",
+        "visible_in_action_list": true
+      },
+      "children": null,
+      "context": "Keypad.9.0",
+      "current_state": 0,
+      "settings": {
+        "anticlockwise": "",
+        "clockwise": "",
+        "down": "https://example.com/down",
+        "up": ""
+      },
+      "states": [
+        {
+          "alignment": "middle",
+          "background_colour": "#000000",
+          "colour": "#FFFFFF",
+          "family": "Liberation Sans",
+          "image": "plugins/com.amansprojects.starterpack.sdPlugin/icons/openUrl.png",
+          "image_scale": 100,
+          "name": "",
+          "show": true,
+          "size": 16,
+          "stroke_colour": "#000000",
+          "stroke_size": 3,
+          "style": "Regular",
+          "text": "",
+          "underline": false
+        }
+      ]
+    },
+    null,
+    null,
+    {
+      "action": {
+        "controllers": [
+          "Keypad"
+        ],
+        "disable_automatic_states": false,
+        "encoder": null,
+        "icon": "plugins/com.ulanzi.d200x.sdPlugin/assets/widescreen.png",
+        "name": "Wide screen",
+        "plugin": "com.ulanzi.d200x.sdPlugin",
+        "property_inspector": "plugins/com.ulanzi.d200x.sdPlugin/propertyInspector/widescreen.html",
+        "states": [
+          {
+            "alignment": "middle",
+            "background_colour": "#000000",
+            "colour": "#FFFFFF",
+            "family": "Liberation Sans",
+            "image": "plugins/com.ulanzi.d200x.sdPlugin/assets/widescreen.png",
+            "image_scale": 100,
+            "name": "",
+            "show": false,
+            "size": 16,
+            "stroke_colour": "#000000",
+            "stroke_size": 3,
+            "style": "Regular",
+            "text": "",
+            "underline": false
+          }
+        ],
+        "supported_in_multi_actions": false,
+        "tooltip": "Choose what the double-width screen shows (clock, system monitor or nothing) and which D200 model this is",
+        "uuid": "com.ulanzi.d200x.widescreen",
+        "visible_in_action_list": true
+      },
+      "children": null,
+      "context": "Keypad.12.0",
+      "current_state": 0,
+      "settings": {},
+      "states": [
+        {
+          "alignment": "middle",
+          "background_colour": "#000000",
+          "colour": "#FFFFFF",
+          "family": "Liberation Sans",
+          "image": "plugins/com.ulanzi.d200x.sdPlugin/assets/widescreen.png",
+          "image_scale": 100,
+          "name": "",
+          "show": false,
+          "size": 16,
+          "stroke_colour": "#000000",
+          "stroke_size": 3,
+          "style": "Regular",
+          "text": "",
+          "underline": false
+        }
+      ]
+    },
+    null,
+    null,
+    null,
+    null
+  ],
+  "sliders": [
+    null,
+    null,
+    null
+  ]
+}

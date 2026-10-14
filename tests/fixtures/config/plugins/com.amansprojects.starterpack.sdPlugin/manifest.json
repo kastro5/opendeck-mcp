@@ -1,0 +1,108 @@
+{
+ "Name": "OpenDeck Starter Pack",
+ "Author": "Aman Khanna (nekename)",
+ "Version": "2.14.1",
+ "Icon": "icons/plugin",
+ "OS": [
+  {
+   "Platform": "mac",
+   "MinimumVersion": "10.11"
+  },
+  {
+   "Platform": "windows",
+   "MinimumVersion": "10"
+  },
+  {
+   "Platform": "linux"
+  }
+ ],
+ "Category": "OpenDeck",
+ "CodePath": "plugin.html",
+ "Actions": [
+  {
+   "Name": "Run Command",
+   "UUID": "com.amansprojects.starterpack.runcommand",
+   "Icon": "icons/runCommand",
+   "Tooltip": "Run a command",
+   "Controllers": [
+    "Keypad",
+    "Encoder"
+   ],
+   "States": [
+    {
+     "Image": "actionDefaultImage"
+    }
+   ],
+   "PropertyInspectorPath": "propertyInspector/runCommand.html",
+   "SupportedInMultiActions": true
+  },
+  {
+   "Name": "Open URL",
+   "UUID": "com.amansprojects.starterpack.openurl",
+   "Icon": "icons/openUrl",
+   "Tooltip": "Open a URL",
+   "Controllers": [
+    "Keypad",
+    "Encoder"
+   ],
+   "States": [
+    {
+     "Image": "actionDefaultImage"
+    }
+   ],
+   "PropertyInspectorPath": "propertyInspector/openUrl.html",
+   "SupportedInMultiActions": true
+  },
+  {
+   "Name": "Simulate Input",
+   "UUID": "com.amansprojects.starterpack.inputsimulation",
+   "Icon": "icons/inputSimulation",
+   "Tooltip": "Simulate mouse or keyboard input",
+   "Controllers": [
+    "Keypad",
+    "Encoder"
+   ],
+   "States": [
+    {
+     "Image": "actionDefaultImage"
+    }
+   ],
+   "PropertyInspectorPath": "propertyInspector/inputSimulation.html",
+   "SupportedInMultiActions": true
+  },
+  {
+   "Name": "Switch Profile",
+   "UUID": "com.amansprojects.starterpack.switchprofile",
+   "Icon": "icons/switchProfile",
+   "Tooltip": "Switch the selected profile",
+   "Controllers": [
+    "Keypad",
+    "Encoder"
+   ],
+   "States": [
+    {
+     "Image": "actionDefaultImage"
+    }
+   ],
+   "PropertyInspectorPath": "propertyInspector/switchProfile.html",
+   "SupportedInMultiActions": true
+  },
+  {
+   "Name": "Device Brightness",
+   "UUID": "com.amansprojects.starterpack.devicebrightness",
+   "Icon": "icons/deviceBrightness",
+   "Tooltip": "Change the device brightness",
+   "Controllers": [
+    "Keypad",
+    "Encoder"
+   ],
+   "States": [
+    {
+     "Image": "actionDefaultImage"
+    }
+   ],
+   "PropertyInspectorPath": "propertyInspector/deviceBrightness.html",
+   "SupportedInMultiActions": true
+  }
+ ]
+}
