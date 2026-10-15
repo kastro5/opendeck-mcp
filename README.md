@@ -58,10 +58,14 @@ You need OpenDeck 2.14, [uv](https://docs.astral.sh/uv/) and Claude Code (or ano
 below). uv fetches a suitable Python by itself.
 
 ```sh
-claude mcp add opendeck --scope user -- uvx --from git+https://github.com/kastro5/opendeck-mcp@v0.3.0 opendeck-mcp
+claude mcp add opendeck --scope user -- uvx opendeck-mcp@0.3.1
 ```
 
 Then restart Claude Code and ask it something like *"what's on my OpenDeck?"*.
+
+It's on [PyPI](https://pypi.org/project/opendeck-mcp/) and in the
+[MCP Registry](https://registry.modelcontextprotocol.io) as `io.github.kastro5/opendeck-mcp`. To run
+straight from GitHub instead: `uvx --from git+https://github.com/kastro5/opendeck-mcp@v0.3.1 opendeck-mcp`.
 
 OpenDeck's folders are found automatically. If yours live somewhere unusual, override them with
 environment variables (`claude mcp add … -e NAME=value`):
@@ -81,7 +85,7 @@ The version is pinned in the command, so replace the registration with the new t
 
 ```sh
 claude mcp remove opendeck --scope user
-claude mcp add opendeck --scope user -- uvx --from git+https://github.com/kastro5/opendeck-mcp@v0.3.0 opendeck-mcp
+claude mcp add opendeck --scope user -- uvx opendeck-mcp@0.3.1
 ```
 
 The first apply after an upgrade also updates the companion bridge plugin (see
@@ -97,7 +101,7 @@ Cursor, VS Code and others) is:
   "mcpServers": {
     "opendeck": {
       "command": "uvx",
-      "args": ["--from", "git+https://github.com/kastro5/opendeck-mcp@v0.3.0", "opendeck-mcp"]
+      "args": ["opendeck-mcp@0.3.1"]
     }
   }
 }
@@ -114,8 +118,8 @@ in; every request also needs a token.
 On the OpenDeck PC (Windows):
 
 ```sh
-uvx --from git+https://github.com/kastro5/opendeck-mcp@v0.3.0 opendeck-mcp install-autostart --host <tailscale-ip>
-uvx --from git+https://github.com/kastro5/opendeck-mcp@v0.3.0 opendeck-mcp token --host <tailscale-ip>
+uvx opendeck-mcp@0.3.1 install-autostart --host <tailscale-ip>
+uvx opendeck-mcp@0.3.1 token --host <tailscale-ip>
 ```
 
 The first command puts a small script in your Startup folder that starts the server, without a

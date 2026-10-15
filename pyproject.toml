@@ -1,6 +1,6 @@
 [project]
 name = "opendeck-mcp"
-version = "0.3.0"
+version = "0.3.1"
 description = "MCP server for configuring OpenDeck (open-source Stream Deck software) in natural language"
 readme = "README.md"
 license = "MIT"

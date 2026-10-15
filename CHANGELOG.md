@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.1 — 2026-10-15
+
+- Published on PyPI (`uvx opendeck-mcp`) and listed in the MCP Registry as
+  `io.github.kastro5/opendeck-mcp`; releases are published by GitHub Actions on version tags.
+
+Upgrading: re-register with `uvx opendeck-mcp@0.3.1` (see the README).
+
 ## 0.3.0 — 2026-10-15
 
 - **Icons.** `make_icon` makes a key image from text, an emoji (Twemoji), a brand logo (Simple

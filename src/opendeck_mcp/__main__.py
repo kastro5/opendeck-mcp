@@ -37,7 +37,7 @@ def main(argv: list[str] | None = None) -> None:
     task = sub.add_parser("install-autostart",
                           help="Windows: start the HTTP server hidden at every logon, and now")
     http_options(task)
-    task.add_argument("--from", dest="source", default=f"git+https://github.com/kastro5/opendeck-mcp@v{__version__}",
+    task.add_argument("--from", dest="source", default=f"opendeck-mcp=={__version__}",
                       help="what uvx runs (default: this release); 'local' runs this Python environment instead")
     sub.add_parser("uninstall-autostart", help="Windows: remove autostart and stop the running HTTP server")
     args = parser.parse_args(argv)
