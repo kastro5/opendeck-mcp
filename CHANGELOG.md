@@ -9,6 +9,12 @@
   `staged`) overrides the choice.
 - New `undo_live` tool: puts back the titles, images and settings changed by instant edits. Images
   are saved as bytes before each edit, so a custom key image can always be restored.
+- **Home Assistant awareness.** `ha_search` finds entities by name, domain or area,
+  `ha_describe_entity` shows an entity's state and services and prints ready-made settings for a
+  Home Assistant key, and `ha_call_service` calls a service on request (after a confirmation step).
+  The server uses the login already saved in the Home Assistant plugin, and the token never appears
+  in any output.
+- `describe_action` now explains the Home Assistant plugin's key settings.
 - New dependency: `websockets`.
 
 ## 0.1.0 — 2026-10-14

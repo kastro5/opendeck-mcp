@@ -38,6 +38,8 @@ devices such as the [Ulanzi D200H/D200X](https://github.com/kastro5/opendeck-ula
   - read plugin logs.
 - **Instant edits:** title, image and settings tweaks to a key on the profile a device is showing
   apply at once, with no restart; `undo_live` takes them back.
+- **Home Assistant:** find entities by name, area or domain, and get ready-made settings for a key
+  that controls one, using the login already saved in the Home Assistant plugin.
 - **Undo:** every apply takes a backup, and `restore_backup` puts things back.
 
 ## Install
@@ -59,6 +61,7 @@ environment variables (`claude mcp add … -e NAME=value`):
 | `OPENDECK_EXE` | `%LOCALAPPDATA%\OpenDeck\opendeck.exe` |
 | `OPENDECK_LOG_DIR` | `%LOCALAPPDATA%\opendeck\logs` |
 | `OPENDECK_MCP_DATA_DIR` | `%LOCALAPPDATA%\opendeck-mcp` (the server's own plan, backups and cache) |
+| `OPENDECK_MCP_HA_VERIFY_TLS` | `1`; set `0` for a Home Assistant on https with a self-signed certificate |
 
 ## Using it
 
@@ -142,6 +145,9 @@ folder, which `undo_live` replays.
 - **Plugins are third-party code.** `stage_plugin` first downloads and inspects the plugin: author, version,
   sha256, how it runs, which platforms it supports, and the catalogue's *AI-assisted* flag. It only stages
   the install after you agree. Built-in plugins can't be removed.
+- **Home Assistant.** The Home Assistant tools reuse the server URL and access token saved by the
+  Home Assistant plugin. The token is only sent to that server, never shown. `ha_call_service` acts
+  on your real home, so it needs a second call with `confirm=true`.
 - **Version check.** Apply refuses to run on OpenDeck versions other than 2.14.x unless you allow it
   explicitly.
 
@@ -152,6 +158,7 @@ folder, which `undo_live` replays.
 | Read | `get_overview`, `show_profile`, `list_actions`, `describe_action`, `get_plugin_settings`, `read_logs`, `get_app_rules`, `find_plugins`, `preview_changes`, `list_backups` |
 | Stage | `set_key`, `update_key`, `clear_key`, `move_key`, `add_child`, `remove_child`, `set_multi_delays`, `manage_profile`, `set_app_rule`, `set_plugin_settings`, `stage_plugin`, `discard_changes`, `set_device_layout` |
 | Apply | `apply_changes`, `restore_backup`, `undo_live` |
+| Home Assistant | `ha_search`, `ha_describe_entity`, `ha_call_service` |
 
 ## Limitations
 

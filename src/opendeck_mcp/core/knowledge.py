@@ -9,6 +9,34 @@ from __future__ import annotations
 
 ROTATE_NOTE = "On a dial, 'clockwise'/'anticlockwise' fire per tick; 'down'/'up' on press/release."
 
+_HA_CALL = ("{entityId, serviceId: 'domain.service' (e.g. light.toggle), serviceData: a JSON *string* "
+            "of extra data, may use {{ }} templates; empty strings when unused}")
+HA_ENTITY = {
+    "summary": "Shows a Home Assistant entity's state and calls a Home Assistant service on press. Find "
+               "entities with ha_search; ha_describe_entity prints ready-made settings for one.",
+    "settings": {
+        "version": "8 (always)",
+        "controllerType": "'Keypad' or 'Encoder'",
+        "display.entityId": "entity shown on the key",
+        "display.useCustomTitle / buttonTitle": "bool / title template, e.g. '{{friendly_name}}' or "
+                                                "'{{state}} {{unit_of_measurement}}' (entity attributes)",
+        "display.useCustomButtonLabels / buttonLabels": "bool / label templates, one per line",
+        "display.iconSettings": "'PREFER_PLUGIN', 'PREFER_HA' (the entity's mdi icon) or 'HIDE'",
+        "display.iconLayout": "'STANDARD', 'BOTTOM' or 'FULL'",
+        "display.labelFontSize": "integer, default 48",
+        "display.backgroundColor / backgroundColorEnd": "'' for none, one colour for solid, both for a gradient",
+        "display.enableServiceIndicator": "bool: flash the key when a service is called",
+        "display.useStateImagesForOnOffStates": "bool: show the action's state 1 image while the entity is on",
+        "button.serviceShortPress": _HA_CALL,
+        "button.serviceLongPress": "same shape; called on a long press",
+        "button.serviceTap / serviceRotation": "same shape; touch strip tap / dial turn (serviceData may use "
+                                               "{{ ticks }})",
+        "rotationTickMultiplier / rotationTickBucketSizeMs": "dial tuning, default 1 / 300",
+    },
+    "notes": "Server URL and token are the plugin's global settings, set once in OpenDeck. serviceId "
+             "'streamdeck.open_url' with serviceData '{\"url\": ...}' opens a URL instead.",
+}
+
 KNOWN: dict[str, dict] = {
     "opendeck.multiaction": {
         "summary": "Runs its child actions in order on one press. Add children with add_child.",
@@ -81,6 +109,12 @@ KNOWN: dict[str, dict] = {
         },
         "example": {"action": "set", "value": 35},
         "notes": "On a dial, turning raises/lowers by the tick count.",
+    },
+    "de.perdoctus.streamdeck.homeassistant.entity": HA_ENTITY,
+    "de.perdoctus.streamdeck.homeassistant.dual-state-entity": {
+        **HA_ENTITY,
+        "summary": "Shows a Home Assistant entity with your own off/on images (state 0 = off, 1 = on) and "
+                   "calls services on press. Set display.useStateImagesForOnOffStates to true.",
     },
 }
 

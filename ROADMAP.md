@@ -49,7 +49,7 @@ settings, title or image change. Otherwise it stages as today.
 
 **Effort:** small to medium.
 
-### A2. Home Assistant awareness ⭐
+### A2. Home Assistant awareness ⭐ — done in 0.2.0
 
 **What:** the server reads the user's Home Assistant (entities, areas, scenes, services) so *"add a key
 that toggles the office lights"* uses the real `entity_id` and service.
@@ -223,6 +223,9 @@ also targets the D200X.
   and `uni` have lowercase aliases.
 - httpx logs full URLs at INFO, and GitHub download URLs carry signed tokens, so keep it at WARNING.
 - MCP SDK 2.x: `from mcp.server.mcpserver import MCPServer` (FastMCP was renamed).
+- On Windows, `homeassistant.local` takes ~3 s to resolve because the IPv6 lookup fails slowly; the
+  server resolves IPv4 once for plain-http `.local` hosts. Zigbee lights report their new state after
+  a service call returns, so read the state back rather than trusting the call's response.
 - `setSettings` sent through `--process-message` only reaches the property inspector, never the plugin.
   Send it over the plugin websocket after `registerPropertyInspector` with the full context as uuid.
 - OpenDeck marks only the *selected* profile as unsaved, so live edits elsewhere could be lost.

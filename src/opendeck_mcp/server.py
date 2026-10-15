@@ -12,7 +12,7 @@ from pydantic import Field
 from . import __version__
 from .core.paths import Paths, discover
 from .runtime import applier
-from .tools import edit_tools, plugin_tools, read_tools
+from .tools import edit_tools, ha_tools, plugin_tools, read_tools
 from .tools.view import View
 
 INSTRUCTIONS = """\
@@ -32,6 +32,7 @@ Workflow:
 Secrets in plugin settings are shown as «redacted»; passing «redacted» back keeps the stored value.
 Run Command / Simulate Input keys execute things on the user's computer: say so when staging them.
 Installing plugins runs third-party code: always get the user's explicit go-ahead.
+Home Assistant keys: ha_search finds entities, ha_describe_entity gives ready-made key settings.
 """
 
 log = logging.getLogger("opendeck_mcp")
@@ -279,6 +280,40 @@ def discard_changes(which: Annotated[str | list[str], Field(
         description="'all', 'last', or staged op ids like ['op3', 'op5'] (see preview_changes).")] = "all") -> str:
     """Drop staged changes without applying them."""
     return edit_tools.discard_changes(paths(), which)
+
+
+# -- home assistant --------------------------------------------------------------------- #
+
+HA_READ = ToolAnnotations(read_only_hint=True, open_world_hint=True)
+
+
+@mcp.tool(annotations=HA_READ)
+def ha_search(query: Annotated[str | None, Field(description="Words to match in id, name or area.")] = None,
+              domain: Annotated[str | None, Field(description="e.g. light, switch, scene, script.")] = None,
+              area: Annotated[str | None, Field(description="Area name, exactly as Home Assistant shows it.")]
+              = None,
+              limit: int = 25) -> str:
+    """Find Home Assistant entities (id, name, state, area) to put on keys, using the Home Assistant
+    plugin's saved login. With no filters, lists the areas and domains."""
+    return ha_tools.ha_search(paths(), query, domain, area, limit)
+
+
+@mcp.tool(annotations=HA_READ)
+def ha_describe_entity(entity_id: str) -> str:
+    """One Home Assistant entity: state, attributes, area, the services its domain offers, and
+    ready-made settings for a Home Assistant key that controls it."""
+    return ha_tools.ha_describe_entity(paths(), entity_id)
+
+
+@mcp.tool(annotations=ToolAnnotations(read_only_hint=False, destructive_hint=True, open_world_hint=True))
+def ha_call_service(service: Annotated[str, Field(description="domain.service, e.g. light.toggle.")],
+                    entity_id: str | None = None,
+                    data: Annotated[dict[str, Any] | None, Field(description="Extra service data.")] = None,
+                    confirm: Annotated[bool, Field(description="false: describe only; true: call it.")] = False
+                    ) -> str:
+    """Call a Home Assistant service right now, e.g. to test what a key will do. Acts on the real
+    home: call with confirm=false first and get the user's OK."""
+    return ha_tools.ha_call_service(paths(), service, entity_id, data, confirm)
 
 
 # -- plugins ---------------------------------------------------------------------------- #
