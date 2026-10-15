@@ -143,7 +143,19 @@ Input keys behind `confirm`. **Effort:** small.
   Bearer <token>"`.
 - Concurrency: the plan lock already serialises sessions.
 
-### B2. OpenDeck plugin version
+### B2. OpenDeck plugin version — done (unreleased)
+
+Built as planned below, with these differences:
+- The token stays in the data folder (shared with `serve`), not in plugin settings, which
+  `get_plugin_settings` can read.
+- The gear page is served by the plugin on its own loopback listener under a random path, so it
+  works even when MCP listens on a Tailscale address.
+- PyInstaller onedir; one zip holds `bin/windows` and `bin/linux`. No macOS build.
+- Learned: `apply-helper` inherits the plugin folder as its working directory, and psutil reports
+  Windows' "Registry" process with the bare exe name `Registry`. Resolved against the plugin folder,
+  that looked like a plugin process, so stop() tried to kill it. `_norm` now ignores relative exe
+  paths. The helper also restarts OpenDeck if anything fails, since nothing else will.
+
 
 Same core code, launched by OpenDeck as a plugin (e.g. `dev.kastro5.opendeck-mcp.sdPlugin`).
 

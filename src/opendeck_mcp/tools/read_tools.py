@@ -7,10 +7,11 @@ import re
 from collections import deque
 
 from ..core import knowledge, pi_scrape
-from ..core.devices import BRIDGE_ID, bridge_status
+from ..core.devices import BRIDGE_ID, PLUGIN_ID, bridge_status
 from ..core.profile import ARRAY_FOR, ProfileError
 from ..core.render import grid, slot_list
 from ..core.secrets import redact, redact_text
+from ..plugin import describe_status as plugin_status
 from ..runtime import process
 from .view import View
 
@@ -41,8 +42,11 @@ def get_overview(view: View) -> str:
     lines.append("Plugins: " + ", ".join(
         f"{info.name} {info.version}" + (" [pending install]" if folder in view.catalog.pending else "")
         + (f" [ERROR: {info.error}]" if info.error else "")
-        for folder, info in sorted(plugins.items()) if folder != BRIDGE_ID))
+        for folder, info in sorted(plugins.items()) if folder not in (BRIDGE_ID, PLUGIN_ID)))
     lines.append(f"Bridge plugin (records device geometry): {bridge_status(paths)}")
+    plugin_line = plugin_status(paths)
+    if plugin_line:
+        lines.append(plugin_line)
     lines.append("")
     lines.append("Next: show_profile to see a profile's keys; list_actions/describe_action to pick actions; "
                  "set_key etc. to stage edits; preview_changes and apply_changes to write them.")

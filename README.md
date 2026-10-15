@@ -19,6 +19,7 @@ devices such as the [Ulanzi D200H/D200X](https://github.com/kastro5/opendeck-ula
   - [Upgrading](#upgrading)
   - [Other MCP clients](#other-mcp-clients)
   - [From another computer](#from-another-computer)
+  - [As an OpenDeck plugin](#as-an-opendeck-plugin)
 - [Using it](#using-it)
 - [How it works](#how-it-works)
 - [Safety](#safety)
@@ -139,6 +140,34 @@ claude mcp add --transport http opendeck http://<tailscale-ip>:8765/mcp --header
 - Windows Firewall must allow inbound TCP 8765 on that network; it asks the first time if it isn't
   already allowed.
 - On Linux or macOS, run `opendeck-mcp serve --host <ip>` from a systemd user service or LaunchAgent.
+
+### As an OpenDeck plugin
+
+The same server also comes as an OpenDeck plugin, which needs neither uv nor a terminal:
+OpenDeck starts and stops it, and it serves MCP over HTTP. Windows and Linux; macOS isn't built.
+
+1. Download `dev.kastro5.opendeck-mcp.sdPlugin.zip` from the
+   [latest release](https://github.com/kastro5/opendeck-mcp/releases/latest), extract it into
+   OpenDeck's `plugins` folder (`%APPDATA%\opendeck\plugins` on Windows) and restart OpenDeck.
+2. In OpenDeck's **Plugins** tab, click the gear next to **OpenDeck MCP**. A page opens in your
+   browser with the `claude mcp add …` command (token included) and a Copy button. Run it, then
+   restart Claude Code.
+
+By default it listens on `127.0.0.1:8765`, for clients on the same PC. To reach it from another
+machine, pick a network address on the same page, ideally the Tailscale one; the listener restarts
+at once and the page shows the new command. The page also makes a new token. It closes itself after
+10 minutes; the gear opens a fresh one.
+
+Differences from the `uvx` server:
+
+- **Applying goes through a helper.** Applying restarts OpenDeck, and the plugin with it, so
+  `apply_changes` and `restore_backup` hand the work to a short-lived helper and return straight away.
+  The result arrives with your next tool call, about 10 seconds later.
+- **No bridge plugin.** The plugin records device geometry itself.
+- **Same token and data folder** as `opendeck-mcp serve`. Don't run both on the same address and
+  port: the second one can't listen, and the gear page (and `get_overview`) says so.
+- It can't update or remove itself; do that from OpenDeck's Plugins tab.
+- The Linux build is compiled and smoke-tested in CI but hasn't been tried on a real deck.
 
 ## Using it
 
@@ -291,6 +320,10 @@ folder, which `undo_live` replays.
 - **A device shows "geometry unknown".** It's learned by the bridge plugin, installed with the first
   apply. Until then `set_device_layout` sets rows and columns by hand.
 - **Undo an apply:** `list_backups`, then `restore_backup`.
+- **Plugin: the gear page says "not serving".** Another program holds the port, usually
+  `opendeck-mcp serve` on the same address. Pick another port on the page, or stop the other server
+  (`opendeck-mcp uninstall-autostart`). The plugin's log is `logs\plugins\dev.kastro5.opendeck-mcp.sdPlugin.log`
+  in OpenDeck's log folder.
 - **HTTP client gets 401 / 421.** 401: wrong or missing token (`opendeck-mcp token`). 421: the client
   used a host name the server doesn't know; add it with `--allowed-host`. The server logs to
   `http.log` in its data folder.

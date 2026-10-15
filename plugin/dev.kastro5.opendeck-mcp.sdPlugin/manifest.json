@@ -1,0 +1,16 @@
+{
+	"Name": "OpenDeck MCP",
+	"Author": "kastro5",
+	"Version": "__VERSION__",
+	"Description": "Lets an AI assistant (Claude Code or any MCP client) set up your keys, profiles and plugins. Open the gear in the Plugins tab to connect it.",
+	"Icon": "icon",
+	"Category": "OpenDeck MCP",
+	"URL": "https://github.com/kastro5/opendeck-mcp",
+	"Actions": [],
+	"HasSettingsInterface": true,
+	"CodePathWin": "bin/windows/opendeck-mcp-plugin.exe",
+	"CodePathLin": "bin/linux/opendeck-mcp-plugin",
+	"SDKVersion": 2,
+	"OS": [{ "Platform": "windows" }, { "Platform": "linux" }],
+	"Software": { "MinimumVersion": "6.0" }
+}

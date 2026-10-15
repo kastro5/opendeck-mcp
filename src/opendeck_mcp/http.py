@@ -84,7 +84,9 @@ def check_bind(host: str, allow_all: bool) -> None:
                          "e.g. this PC's Tailscale IP, or pass --allow-all-interfaces if you really mean it.")
 
 
-def build_app(host: str, token: str, extra_hosts: list[str]):
+def build_app(host: str, token: str, extra_hosts: list[str], stateless: bool = False):
+    """stateless: no MCP session ids, so clients carry on when the server restarts (the plugin build
+    restarts with OpenDeck on every apply)."""
     from mcp.server.transport_security import TransportSecuritySettings
 
     from .server import mcp
@@ -93,7 +95,7 @@ def build_app(host: str, token: str, extra_hosts: list[str]):
     if ":" in host and not host.startswith("["):
         allowed.add(f"[{host}]:*")
     security = TransportSecuritySettings(enable_dns_rebinding_protection=True, allowed_hosts=sorted(allowed))
-    app = mcp.streamable_http_app(transport_security=security, host=host)
+    app = mcp.streamable_http_app(transport_security=security, host=host, stateless_http=stateless)
     return BearerAuth(app, token)
 
 

@@ -1,5 +1,17 @@
 # Changelog
 
+## Unreleased
+
+- **OpenDeck plugin.** The server also ships as an OpenDeck plugin
+  (`dev.kastro5.opendeck-mcp.sdPlugin`, Windows and Linux) that needs no uv or terminal. OpenDeck
+  starts it, and it serves MCP over HTTP on 127.0.0.1:8765. The gear in OpenDeck's Plugins tab opens
+  a page with the `claude mcp add` command, the address to listen on, and a token reset. Applying
+  and restoring go through a detached helper, because restarting OpenDeck restarts the plugin; the
+  next tool call reports the result. It records device geometry itself, so the bridge plugin isn't
+  installed alongside it.
+- Stopping OpenDeck no longer mistakes system processes that report a bare name (Windows'
+  "Registry") for plugins when run from a plugin's folder.
+
 ## 0.3.1 — 2026-10-15
 
 - Published on PyPI (`uvx opendeck-mcp`) and listed in the MCP Registry as

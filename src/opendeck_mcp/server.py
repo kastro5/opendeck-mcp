@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import functools
 import logging
 from typing import Annotated, Any, Literal
 
@@ -12,7 +13,7 @@ from pydantic import Field
 
 from . import __version__
 from .core.paths import Paths, discover
-from .runtime import applier
+from .runtime import applier, detached
 from .tools import edit_tools, ha_tools, icon_tools, plugin_tools, preview_tools, read_tools
 from .tools.view import View
 
@@ -52,6 +53,26 @@ DESTRUCTIVE = ToolAnnotations(read_only_hint=False, destructive_hint=True, idemp
 _paths: Paths | None = None
 
 
+def tool(**options):
+    """mcp.tool, plus: as the OpenDeck plugin, the first call after a detached apply carries its report."""
+    register = mcp.tool(**options)
+
+    def decorate(fn):
+        @functools.wraps(fn)
+        def wrapper(*args, **kwargs):
+            report = detached.take_report(paths()) if detached.active() else None
+            result = fn(*args, **kwargs)
+            if report is None:
+                return result
+            if isinstance(result, list):
+                return [*result, report]
+            return f"{report}\n\n---\n\n{result}"
+
+        return register(wrapper)
+
+    return decorate
+
+
 def paths() -> Paths:
     global _paths
     if _paths is None:
@@ -75,14 +96,14 @@ Image = Annotated[str | None, Field(
 
 # -- read ------------------------------------------------------------------------------ #
 
-@mcp.tool(annotations=READ)
+@tool(annotations=READ)
 def get_overview() -> str:
     """Start here. Lists devices (grid size, dials, touchpoints, connected), each device's profiles and
     which is selected, installed plugins, whether OpenDeck is running, and how many changes are staged."""
     return read_tools.get_overview(View(paths()))
 
 
-@mcp.tool(annotations=READ)
+@tool(annotations=READ)
 def show_profile(device: Device, profile: Profile = None,
                  show_settings: Annotated[bool, Field(description="Include each key's settings (redacted).")] = False,
                  show_children: bool = True) -> str:
@@ -92,7 +113,7 @@ def show_profile(device: Device, profile: Profile = None,
     return read_tools.show_profile(View(paths()), device, profile, show_settings, show_children)
 
 
-@mcp.tool(annotations=READ)
+@tool(annotations=READ)
 def list_actions(query: Annotated[str | None, Field(description="Filter by text in name/plugin/uuid.")] = None,
                  plugin: Annotated[str | None, Field(description="Only this plugin (name or id).")] = None,
                  controller: Annotated[Literal["Keypad", "Encoder"] | None, Field(
@@ -102,7 +123,7 @@ def list_actions(query: Annotated[str | None, Field(description="Filter by text 
     return read_tools.list_actions(View(paths()), query, plugin, controller)
 
 
-@mcp.tool(annotations=READ)
+@tool(annotations=READ)
 def describe_action(action: Annotated[str, Field(description="Action uuid or name, e.g. 'Open URL'.")]) -> str:
     """Explain one action's settings before placing it: a curated schema for OpenDeck and Starter Pack
     actions, otherwise hints read from the plugin's settings page, plus real settings from the user's
@@ -110,13 +131,13 @@ def describe_action(action: Annotated[str, Field(description="Action uuid or nam
     return read_tools.describe_action(View(paths()), action)
 
 
-@mcp.tool(annotations=READ)
+@tool(annotations=READ)
 def get_plugin_settings(plugin: Annotated[str, Field(description="Plugin name or folder id.")]) -> str:
     """Show a plugin's global (plugin-wide) settings with secret values redacted."""
     return read_tools.get_plugin_settings(View(paths()), plugin)
 
 
-@mcp.tool(annotations=READ)
+@tool(annotations=READ)
 def read_logs(plugin: Annotated[str | None, Field(description="Plugin name/id, or omit for OpenDeck's own log.")]
               = None, lines: int = 80,
               grep: Annotated[str | None, Field(description="Only lines matching this regex.")] = None) -> str:
@@ -124,7 +145,7 @@ def read_logs(plugin: Annotated[str | None, Field(description="Plugin name/id, o
     return read_tools.read_logs(View(paths()), plugin, lines, grep)
 
 
-@mcp.tool(annotations=READ)
+@tool(annotations=READ)
 def get_app_rules() -> str:
     """Show automatic profile switching: which profile each device switches to when an app is focused."""
     return read_tools.get_app_rules(View(paths()))
@@ -132,7 +153,7 @@ def get_app_rules() -> str:
 
 # -- staging ----------------------------------------------------------------------------- #
 
-@mcp.tool(annotations=STAGE)
+@tool(annotations=STAGE)
 def set_key(device: Device, slot: Slot,
             action: Annotated[str, Field(description="Action uuid or name (see list_actions).")],
             profile: Profile = None,
@@ -145,7 +166,7 @@ def set_key(device: Device, slot: Slot,
     return edit_tools.set_key(paths(), device, slot, action, profile, title, settings, image, title_style)
 
 
-@mcp.tool(annotations=STAGE)
+@tool(annotations=STAGE)
 def update_key(device: Device, slot: Annotated[str, Field(description="Slot, or <slot>/child<N> for a child.")],
                profile: Profile = None,
                state: Annotated[int | Literal["all"] | None, Field(
@@ -172,7 +193,7 @@ def update_key(device: Device, slot: Annotated[str, Field(description="Slot, or 
                                  settings_replace, remove_settings, current_state, mode)
 
 
-@mcp.tool(annotations=DESTRUCTIVE)
+@tool(annotations=DESTRUCTIVE)
 def undo_live(count: Annotated[int, Field(description="How many of the latest live edits to undo.")] = 1) -> str:
     """Undo the latest instant (live) edits made by update_key, newest first: titles, images and
     settings go back to what they were. Staged changes and applied plans are undone with
@@ -180,7 +201,7 @@ def undo_live(count: Annotated[int, Field(description="How many of the latest li
     return edit_tools.undo_live(paths(), count)
 
 
-@mcp.tool(annotations=STAGE)
+@tool(annotations=STAGE)
 def make_folder(device: Device,
                 slot: Annotated[str, Field(description="Empty key that will open the folder.")],
                 name: Annotated[str, Field(description="Folder name, also the key's title.")],
@@ -195,13 +216,13 @@ def make_folder(device: Device,
     return edit_tools.make_folder(paths(), device, slot, name, profile, back_slot, image, back_image)
 
 
-@mcp.tool(annotations=STAGE)
+@tool(annotations=STAGE)
 def clear_key(device: Device, slot: Slot, profile: Profile = None) -> str:
     """Remove the action from a key or dial. Staged only."""
     return edit_tools.clear_key(paths(), device, slot, profile)
 
 
-@mcp.tool(annotations=STAGE)
+@tool(annotations=STAGE)
 def move_key(device: Device, from_slot: Slot, to_slot: Slot,
              mode: Annotated[Literal["move", "swap", "copy"], Field(
                  description="move (destination must be empty), swap, or copy.")] = "move",
@@ -214,7 +235,7 @@ def move_key(device: Device, from_slot: Slot, to_slot: Slot,
     return edit_tools.move_key(paths(), device, from_slot, to_slot, mode, profile, to_profile, to_device)
 
 
-@mcp.tool(annotations=STAGE)
+@tool(annotations=STAGE)
 def add_child(device: Device, slot: Annotated[str, Field(description="Slot holding a Multi/Toggle Action.")],
               action: Annotated[str, Field(description="Action uuid or name to add inside it.")],
               profile: Profile = None, settings: dict[str, Any] | None = None, title: str | None = None,
@@ -228,14 +249,14 @@ def add_child(device: Device, slot: Annotated[str, Field(description="Slot holdi
                                 position, delay_ms)
 
 
-@mcp.tool(annotations=STAGE)
+@tool(annotations=STAGE)
 def remove_child(device: Device, slot: Slot, child: Annotated[int, Field(description="1-based child number.")],
                  profile: Profile = None) -> str:
     """Remove one action from inside a Multi/Toggle Action. Staged only."""
     return edit_tools.remove_child(paths(), device, slot, child, profile)
 
 
-@mcp.tool(annotations=STAGE)
+@tool(annotations=STAGE)
 def set_multi_delays(device: Device, slot: Slot,
                      delays_ms: Annotated[list[int], Field(
                          description="delays_ms[i] = wait after child i+1, in ms (default 100 each).")],
@@ -244,7 +265,7 @@ def set_multi_delays(device: Device, slot: Slot,
     return edit_tools.set_multi_delays(paths(), device, slot, delays_ms, profile)
 
 
-@mcp.tool(annotations=STAGE)
+@tool(annotations=STAGE)
 def manage_profile(device: Device,
                    operation: Literal["create", "duplicate", "rename", "delete", "set_default"],
                    profile: Annotated[str, Field(
@@ -258,7 +279,7 @@ def manage_profile(device: Device,
     return edit_tools.manage_profile(paths(), device, operation, profile, new_name, copy_from)
 
 
-@mcp.tool(annotations=STAGE)
+@tool(annotations=STAGE)
 def set_app_rule(app: Annotated[str, Field(
                      description="The app's display name as OpenDeck sees it (e.g. 'Visual Studio Code', "
                                  "'Chatterino'), or 'opendeck_default' for the fallback when no rule matches.")],
@@ -269,7 +290,7 @@ def set_app_rule(app: Annotated[str, Field(
     return edit_tools.set_app_rule(paths(), app, device, profile)
 
 
-@mcp.tool(annotations=STAGE)
+@tool(annotations=STAGE)
 def set_plugin_settings(plugin: Annotated[str, Field(description="Plugin name or folder id.")],
                         values: Annotated[dict[str, Any], Field(
                             description="Merged into the plugin's global settings. «redacted» keeps a secret.")],
@@ -278,14 +299,14 @@ def set_plugin_settings(plugin: Annotated[str, Field(description="Plugin name or
     return edit_tools.set_plugin_settings(paths(), plugin, values, remove_keys)
 
 
-@mcp.tool(annotations=STAGE)
+@tool(annotations=STAGE)
 def set_device_layout(device: Device, rows: int, columns: int) -> str:
     """Tell opendeck-mcp a device's key grid size when it can't detect it (stored locally; doesn't
     touch OpenDeck). Usually unnecessary: the bridge plugin records it automatically."""
     return edit_tools.set_device_layout(paths(), device, rows, columns)
 
 
-@mcp.tool(annotations=READ)
+@tool(annotations=READ)
 def preview_changes(detail: Annotated[Literal["summary", "files"], Field(
         description="summary: per-key changes and warnings; files: JSON diffs.")] = "summary") -> str:
     """Show everything staged: per device/profile/slot changes, warnings (commands that will run, plugins
@@ -293,14 +314,14 @@ def preview_changes(detail: Annotated[Literal["summary", "files"], Field(
     return edit_tools.preview_changes(paths(), detail)
 
 
-@mcp.tool(annotations=STAGE)
+@tool(annotations=STAGE)
 def discard_changes(which: Annotated[str | list[str], Field(
         description="'all', 'last', or staged op ids like ['op3', 'op5'] (see preview_changes).")] = "all") -> str:
     """Drop staged changes without applying them."""
     return edit_tools.discard_changes(paths(), which)
 
 
-@mcp.tool(annotations=READ)
+@tool(annotations=READ)
 def render_profile(device: Device, profile: Profile = None,
                    staged: Annotated[bool, Field(description="Include staged changes (outlined).")] = True,
                    compare: Annotated[bool, Field(description="Now and after-apply side by side.")] = False
@@ -311,7 +332,7 @@ def render_profile(device: Device, profile: Profile = None,
     return [ImageResult(data=data, format="png"), caption]
 
 
-@mcp.tool(annotations=ToolAnnotations(read_only_hint=False, destructive_hint=False, open_world_hint=True))
+@tool(annotations=ToolAnnotations(read_only_hint=False, destructive_hint=False, open_world_hint=True))
 def make_icon(icon: Annotated[str, Field(description="text:Hi (use \n for a second line), emoji:🔥, "
                                                      "brand:github (Simple Icons slug) or mdi:lightbulb-on "
                                                      "(Material Design Icons name). Names: find_icons.")],
@@ -330,7 +351,7 @@ def make_icon(icon: Annotated[str, Field(description="text:Hi (use \n for a seco
     return [ImageResult(data=data, format="png"), text]
 
 
-@mcp.tool(annotations=ToolAnnotations(read_only_hint=True, open_world_hint=True))
+@tool(annotations=ToolAnnotations(read_only_hint=True, open_world_hint=True))
 def find_icons(query: Annotated[str, Field(description="Words, e.g. 'microphone off' or 'spotify'.")],
                icon_set: Annotated[Literal["all", "mdi", "brand"], Field(
                    description="mdi: ~7,400 generic symbols; brand: ~3,400 logos (Simple Icons).")] = "all",
@@ -344,7 +365,7 @@ def find_icons(query: Annotated[str, Field(description="Words, e.g. 'microphone 
 HA_READ = ToolAnnotations(read_only_hint=True, open_world_hint=True)
 
 
-@mcp.tool(annotations=HA_READ)
+@tool(annotations=HA_READ)
 def ha_search(query: Annotated[str | None, Field(description="Words to match in id, name or area.")] = None,
               domain: Annotated[str | None, Field(description="e.g. light, switch, scene, script.")] = None,
               area: Annotated[str | None, Field(description="Area name, exactly as Home Assistant shows it.")]
@@ -355,14 +376,14 @@ def ha_search(query: Annotated[str | None, Field(description="Words to match in 
     return ha_tools.ha_search(paths(), query, domain, area, limit)
 
 
-@mcp.tool(annotations=HA_READ)
+@tool(annotations=HA_READ)
 def ha_describe_entity(entity_id: str) -> str:
     """One Home Assistant entity: state, attributes, area, the services its domain offers, and
     ready-made settings for a Home Assistant key that controls it."""
     return ha_tools.ha_describe_entity(paths(), entity_id)
 
 
-@mcp.tool(annotations=ToolAnnotations(read_only_hint=False, destructive_hint=True, open_world_hint=True))
+@tool(annotations=ToolAnnotations(read_only_hint=False, destructive_hint=True, open_world_hint=True))
 def ha_call_service(service: Annotated[str, Field(description="domain.service, e.g. light.toggle.")],
                     entity_id: str | None = None,
                     data: Annotated[dict[str, Any] | None, Field(description="Extra service data.")] = None,
@@ -375,7 +396,7 @@ def ha_call_service(service: Annotated[str, Field(description="domain.service, e
 
 # -- plugins ---------------------------------------------------------------------------- #
 
-@mcp.tool(annotations=ToolAnnotations(read_only_hint=True, open_world_hint=True))
+@tool(annotations=ToolAnnotations(read_only_hint=True, open_world_hint=True))
 def find_plugins(query: Annotated[str | None, Field(description="Search text.")] = None,
                  source: Annotated[Literal["catalogue", "archive", "installed"], Field(
                      description="catalogue: open-source OpenAction plugins (same list as OpenDeck's "
@@ -386,7 +407,7 @@ def find_plugins(query: Annotated[str | None, Field(description="Search text.")]
     return plugin_tools.find_plugins(paths(), query, source, limit)
 
 
-@mcp.tool(annotations=STAGE_NET)
+@tool(annotations=STAGE_NET)
 def stage_plugin(operation: Literal["install", "update", "remove"],
                  plugin_id: Annotated[str, Field(description="Catalogue id (see find_plugins) or installed id.")],
                  source: Literal["catalogue", "archive", "url"] = "catalogue",
@@ -403,7 +424,7 @@ def stage_plugin(operation: Literal["install", "update", "remove"],
 
 # -- apply ------------------------------------------------------------------------------ #
 
-@mcp.tool(annotations=DESTRUCTIVE)
+@tool(annotations=DESTRUCTIVE)
 def apply_changes(confirm: Annotated[bool, Field(
                       description="false: show what would happen. true: apply (only after the user agreed).")]
                   = False,
@@ -413,20 +434,29 @@ def apply_changes(confirm: Annotated[bool, Field(
                   allow_untested_version: bool = False) -> str:
     """The only tool that changes OpenDeck. Stops OpenDeck, backs up, writes all staged changes, verifies
     them and restarts OpenDeck. Call with confirm=false first and show the user the result."""
-    return applier.apply(paths(), confirm, show_window, on_conflict, allow_untested_version)
+    detach = None
+    if detached.active():
+        def detach() -> str:
+            return detached.start(paths(), "apply", show_window=show_window, on_conflict=on_conflict,
+                                  allow_untested_version=allow_untested_version)
+    return applier.apply(paths(), confirm, show_window, on_conflict, allow_untested_version, detach=detach)
 
 
-@mcp.tool(annotations=READ)
+@tool(annotations=READ)
 def list_backups(limit: int = 10) -> str:
     """Backups taken by apply_changes and restore_backup, newest first."""
     return applier.list_backups(paths(), limit)
 
 
-@mcp.tool(annotations=DESTRUCTIVE)
+@tool(annotations=DESTRUCTIVE)
 def restore_backup(backup_id: str, confirm: bool = False, show_window: bool = False) -> str:
     """Undo an apply: put the files it changed back as they were (restarts OpenDeck). Call with
     confirm=false first to see what would be restored."""
-    return applier.restore(paths(), backup_id, confirm, show_window)
+    detach = None
+    if detached.active():
+        def detach() -> str:
+            return detached.start(paths(), "restore", backup_id=backup_id, show_window=show_window)
+    return applier.restore(paths(), backup_id, confirm, show_window, detach=detach)
 
 
 def run() -> None:

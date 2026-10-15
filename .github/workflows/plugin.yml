@@ -1,0 +1,98 @@
+# Build the OpenDeck plugin (dev.kastro5.opendeck-mcp.sdPlugin) and attach it to the GitHub release.
+#
+# Each OS freezes its own binary; one zip then carries both, so the same download works on Windows
+# and Linux (manifest CodePathWin / CodePathLin). On a v* tag the zip goes on that tag's release
+# (created here with the CHANGELOG entry as notes if it doesn't exist yet). Run it by hand for a
+# test build: the zip is kept as a workflow artifact and nothing is published.
+name: Plugin
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            name: windows
+            exe: opendeck-mcp-plugin.exe
+          - os: ubuntu-latest
+            name: linux
+            exe: opendeck-mcp-plugin
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+
+      - name: Build
+        run: |
+          uv sync --locked
+          uv run --with pyinstaller==6.22.3 python scripts/build_plugin.py build
+
+      - name: Smoke test
+        # With nothing listening on the port, the plugin must get as far as connecting to OpenDeck:
+        # proof that every bundled import loaded.
+        shell: bash
+        run: |
+          set +e
+          ./build/bins/${{ matrix.name }}/${{ matrix.exe }} --version
+          ./build/bins/${{ matrix.name }}/${{ matrix.exe }} -port 1 -pluginUUID ci > smoke.log 2>&1
+          cat smoke.log
+          grep -qiE "refused|ConnectionRefused" smoke.log || { echo "plugin did not reach the websocket"; exit 1; }
+          ! grep -q "ModuleNotFoundError" smoke.log
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: bins-${{ matrix.name }}
+          path: build/bins/
+          if-no-files-found: error
+
+  package:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # attach to the release
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          pattern: bins-*
+          path: build/bins
+          merge-multiple: true
+
+      - name: Package
+        run: |
+          if [ "$GITHUB_REF_TYPE" = tag ]; then
+            version=$(grep -m1 '^__version__' src/opendeck_mcp/__init__.py | cut -d'"' -f2)
+            test "v$version" = "$GITHUB_REF_NAME" || { echo "tag $GITHUB_REF_NAME != version $version"; exit 1; }
+          fi
+          uv run --no-project python scripts/build_plugin.py package
+          unzip -l dist/*.zip | tail -1
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: plugin
+          path: dist/*.zip
+
+      - name: Attach to the release
+        if: github.ref_type == 'tag'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ! gh release view "$GITHUB_REF_NAME" > /dev/null 2>&1; then
+            version="${GITHUB_REF_NAME#v}"
+            awk -v v="$version" '$0 ~ "^## " v {f=1; next} /^## /{f=0} f' CHANGELOG.md > notes.md
+            gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --notes-file notes.md --verify-tag
+          fi
+          gh release upload "$GITHUB_REF_NAME" dist/*.zip --clobber

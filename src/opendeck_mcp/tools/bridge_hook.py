@@ -7,7 +7,7 @@ from importlib import resources
 from pathlib import Path
 
 from .. import __version__
-from ..core.devices import BRIDGE_ID
+from ..core.devices import BRIDGE_ID, plugin_installed
 from ..core.jsonio import read_json
 from ..core.paths import Paths
 
@@ -35,7 +35,7 @@ def prepare_source(paths: Paths) -> Path:
 
 
 def bridge_records(paths: Paths, records: list[dict], current: dict) -> list[dict]:
-    if installed_version(paths) == __version__:
+    if installed_version(paths) == __version__ or plugin_installed(paths):
         return []
     if any(r["op"] == "install_bridge" for r in records):
         return []

@@ -12,8 +12,16 @@ def _paths():
 
 
 def main(argv: list[str] | None = None) -> None:
+    import sys
+
     from . import __version__
     from . import http as H
+
+    argv = sys.argv[1:] if argv is None else argv
+    if argv[:1] == ["-port"]:  # started by OpenDeck as a plugin
+        from .plugin import main as plugin_main
+
+        return plugin_main(argv)
 
     parser = argparse.ArgumentParser(prog="opendeck-mcp", description="MCP server for OpenDeck.")
     parser.add_argument("--version", action="version", version=__version__)
@@ -40,6 +48,8 @@ def main(argv: list[str] | None = None) -> None:
     task.add_argument("--from", dest="source", default=f"opendeck-mcp=={__version__}",
                       help="what uvx runs (default: this release); 'local' runs this Python environment instead")
     sub.add_parser("uninstall-autostart", help="Windows: remove autostart and stop the running HTTP server")
+    helper = sub.add_parser("apply-helper", help=argparse.SUPPRESS)  # the plugin build's detached apply
+    helper.add_argument("--job", required=True)
     args = parser.parse_args(argv)
 
     if args.command in (None, "stdio"):
@@ -63,6 +73,12 @@ def main(argv: list[str] | None = None) -> None:
         H.start_autostart()
         print(f"Autostart installed ({script}) and started: http://{args.host}:{args.port}/mcp\n"
               f"Get the client command with: opendeck-mcp token --host {args.host} --port {args.port}")
+    elif args.command == "apply-helper":
+        from pathlib import Path
+
+        from .runtime.detached import run_job
+
+        raise SystemExit(run_job(_paths(), Path(args.job)))
     elif args.command == "uninstall-autostart":
         removed = H.uninstall_autostart()
         stopped = H.stop_servers()

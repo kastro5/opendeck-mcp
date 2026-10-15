@@ -9,10 +9,11 @@ verify, and start it again detached.
 from __future__ import annotations
 
 import shutil
+from collections.abc import Callable
 from pathlib import Path
 
 from ..core import profile as prof
-from ..core.devices import layouts
+from ..core.devices import PLUGIN_ID, layouts
 from ..core.jsonio import atomic_write, dumps, dumps_compact, read_json
 from ..core.paths import Paths
 from ..core.profile import ProfileError
@@ -173,7 +174,9 @@ def _stop(paths: Paths) -> tuple[bool, list[str]]:
 
 
 def apply(paths: Paths, confirm: bool, show_window: bool, on_conflict: str, allow_untested_version: bool,
-          start_if_stopped: bool = False) -> str:
+          start_if_stopped: bool = False, detach: Callable[[], str] | None = None) -> str:
+    """detach: once every check has passed, hand the actual apply to this instead (the plugin build,
+    which stopping OpenDeck would kill, runs it in a detached helper)."""
     with plan.locked(paths):
         records = plan.load(paths)["ops"]
         if not records:
@@ -190,6 +193,11 @@ def apply(paths: Paths, confirm: bool, show_window: bool, on_conflict: str, allo
         if not confirm:
             return (preview + "\n\nNot applied yet. Show this to the user; once they agree, call apply_changes "
                               "again with confirm=true.")
+        if detach:
+            if any(r["args"].get("folder") == PLUGIN_ID for r in records):
+                raise ProfileError("this server runs as the OpenDeck MCP plugin, so it can't replace or remove "
+                                   "itself; discard that op and update the plugin from OpenDeck's Plugins tab")
+            return detach()
 
         was_running, notes = _stop(paths)
         start_size = _log_size(paths)
@@ -236,7 +244,8 @@ def apply(paths: Paths, confirm: bool, show_window: bool, on_conflict: str, allo
         return "\n".join(lines)
 
 
-def restore(paths: Paths, backup_id: str, confirm: bool, show_window: bool) -> str:
+def restore(paths: Paths, backup_id: str, confirm: bool, show_window: bool,
+            detach: Callable[[], str] | None = None) -> str:
     with plan.locked(paths):
         backup = backups.get(paths, backup_id)
         listing = "\n".join(f"  {'restore' if e['existed'] else 'remove'} {e['rel']}" for e in backup.meta["entries"])
@@ -244,6 +253,11 @@ def restore(paths: Paths, backup_id: str, confirm: bool, show_window: bool) -> s
             return (f"Restoring {backup.summary}\nputs these back exactly as they were before that change "
                     f"(later edits to them are undone too; a backup of the current state is taken first):\n"
                     f"{listing}\n\nCall restore_backup again with confirm=true once the user agrees.")
+        if detach:
+            if any(e["rel"].startswith(f"plugins/{PLUGIN_ID}") for e in backup.meta["entries"]):
+                raise ProfileError("that backup includes the OpenDeck MCP plugin itself, which can't be "
+                                   "restored while it's running; restore it with the uvx server instead")
+            return detach()
         was_running, notes = _stop(paths)
         try:
             rels = {e["rel"] for e in backup.meta["entries"]}

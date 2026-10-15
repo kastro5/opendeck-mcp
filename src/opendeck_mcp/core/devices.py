@@ -18,6 +18,8 @@ from .paths import Paths
 from .profile import ProfileError, list_devices, list_profiles, load_profile, selected_profile
 
 BRIDGE_ID = "dev.kastro5.opendeck-mcp-bridge.sdPlugin"
+# The plugin build of opendeck-mcp records the same data, so it replaces the bridge.
+PLUGIN_ID = "dev.kastro5.opendeck-mcp.sdPlugin"
 
 # device-id prefix -> (rows, columns, name)
 KNOWN = {
@@ -112,11 +114,17 @@ def parse_slot(text: str, layout: DeviceLayout) -> SlotRef:
 
 
 def _bridge_devices(paths: Paths) -> dict[str, Any]:
-    try:
-        data = read_json(paths.settings_dir / f"{BRIDGE_ID}.json")
-        return data.get("devices") or {}
-    except (OSError, ValueError, AttributeError):
-        return {}
+    devices: dict[str, Any] = {}
+    for folder in (BRIDGE_ID, PLUGIN_ID):  # the plugin's record wins: it's the one still running
+        try:
+            devices.update(read_json(paths.settings_dir / f"{folder}.json").get("devices") or {})
+        except (OSError, ValueError, AttributeError):
+            continue
+    return devices
+
+
+def plugin_installed(paths: Paths) -> bool:
+    return (paths.plugins_dir / PLUGIN_ID).is_dir()
 
 
 def _overrides(paths: Paths) -> dict[str, Any]:
@@ -127,6 +135,8 @@ def _overrides(paths: Paths) -> dict[str, Any]:
 
 
 def bridge_status(paths: Paths) -> str:
+    if plugin_installed(paths):
+        return "not needed (the OpenDeck MCP plugin records it)"
     plugin = paths.plugins_dir / BRIDGE_ID
     if not plugin.is_dir():
         return "not installed"

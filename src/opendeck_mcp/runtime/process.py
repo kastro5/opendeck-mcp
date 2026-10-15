@@ -14,7 +14,11 @@ from ..core.paths import Paths, os_name
 
 
 def _norm(path: str | Path | None) -> str:
-    return os.path.normcase(os.path.realpath(str(path))) if path else ""
+    # Some system processes report a bare name as their exe (Windows' "Registry"); resolving that
+    # against the current directory would place it wherever we run from, such as a plugin folder.
+    if not path or not os.path.isabs(str(path)):
+        return ""
+    return os.path.normcase(os.path.realpath(str(path)))
 
 
 def plugin_roots(paths: Paths) -> list[str]:
@@ -25,11 +29,16 @@ def plugin_roots(paths: Paths) -> list[str]:
 
 
 def find(paths: Paths) -> list[psutil.Process]:
-    """OpenDeck itself plus any plugin process still running from its plugin folders."""
+    """OpenDeck itself plus any plugin process still running from its plugin folders.
+
+    Never this process: as the plugin build's apply helper it runs from a plugin folder too.
+    """
     exe = _norm(paths.exe)
     roots = plugin_roots(paths)
     found = []
     for proc in psutil.process_iter(["exe", "name"]):
+        if proc.pid == os.getpid():
+            continue
         try:
             path = _norm(proc.info["exe"])
         except (psutil.Error, OSError):
@@ -87,7 +96,7 @@ def stop(paths: Paths, timeout: float = 10.0) -> None:
     for proc in find(paths):
         if _norm(proc.info["exe"]) == exe:
             try:
-                tree += proc.children(recursive=True)
+                tree += [c for c in proc.children(recursive=True) if c.pid != os.getpid()]
             except psutil.Error:
                 pass
         tree.append(proc)
@@ -96,7 +105,10 @@ def stop(paths: Paths, timeout: float = 10.0) -> None:
             proc.kill()
         except psutil.Error:
             pass
-    psutil.wait_procs(tree, timeout=5)
+    try:
+        psutil.wait_procs(tree, timeout=5)
+    except psutil.Error:
+        pass  # the loop below checks what's actually left
     deadline = time.monotonic() + timeout
     while time.monotonic() < deadline:
         left = find(paths)
