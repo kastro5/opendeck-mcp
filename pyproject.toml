@@ -6,6 +6,16 @@ readme = "README.md"
 license = "MIT"
 requires-python = ">=3.11"
 authors = [{ name = "kastro5" }]
+keywords = ["mcp", "model-context-protocol", "opendeck", "stream-deck", "streamdeck", "claude"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: End Users/Desktop",
+    "Operating System :: Microsoft :: Windows",
+    "Programming Language :: Python :: 3",
+    "Topic :: Desktop Environment",
+    "Topic :: Utilities",
+]
 dependencies = [
     "mcp==2.2.0",
     "httpx==0.28.1",
@@ -15,6 +25,11 @@ dependencies = [
     "resvg-py==0.5.0",
     "websockets==15.0.1",
 ]
+
+[project.urls]
+Homepage = "https://github.com/kastro5/opendeck-mcp"
+Changelog = "https://github.com/kastro5/opendeck-mcp/blob/main/CHANGELOG.md"
+Issues = "https://github.com/kastro5/opendeck-mcp/issues"
 
 [project.scripts]
 opendeck-mcp = "opendeck_mcp.__main__:main"

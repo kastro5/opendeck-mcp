@@ -1,5 +1,7 @@
 # opendeck-mcp
 
+<!-- mcp-name: io.github.kastro5/opendeck-mcp -->
+
 Set up your [OpenDeck](https://github.com/nekename/OpenDeck) stream controller by asking an AI agent:
 
 > "Put a Multi Action on the top-left key that mutes my mic and opens Discord, make a 'Gaming'

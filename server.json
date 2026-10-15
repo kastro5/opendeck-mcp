@@ -1,0 +1,22 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.kastro5/opendeck-mcp",
+  "title": "OpenDeck",
+  "description": "Configure OpenDeck stream controllers (Stream Deck and others) in natural language.",
+  "repository": {
+    "url": "https://github.com/kastro5/opendeck-mcp",
+    "source": "github"
+  },
+  "version": "0.3.1",
+  "packages": [
+    {
+      "registryType": "pypi",
+      "identifier": "opendeck-mcp",
+      "version": "0.3.1",
+      "runtimeHint": "uvx",
+      "transport": {
+        "type": "stdio"
+      }
+    }
+  ]
+}
