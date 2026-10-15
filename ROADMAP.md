@@ -1,6 +1,6 @@
 # opendeck-mcp roadmap
 
-Notes for picking this up later. State as of **2026-10-15**: v0.2.0 published (A1, A2, A3 and B1
+Notes for picking this up later. State as of **2026-10-15**: v0.3.0 published (A1–A5 and B1
 done), tested live on a Ulanzi D200H with OpenDeck 2.14.1 on Windows 11.
 
 ## Recommended order

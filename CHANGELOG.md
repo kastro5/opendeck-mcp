@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.3.0 — unreleased
+## 0.3.0 — 2026-10-15
 
 - **Icons.** `make_icon` makes a key image from text, an emoji (Twemoji), a brand logo (Simple
   Icons, in the brand's colour) or a symbol (Material Design Icons), and saves it as a PNG to pass
@@ -10,6 +10,8 @@
 - `get_app_rules` lists the exact names of the apps you have open, as OpenDeck matches them (the
   executable's description on Windows), so app rules no longer need a trip through OpenDeck's UI.
 - Staged moves to another profile no longer show a stray space in their description.
+
+Upgrading: re-register with `@v0.3.0` (see the README).
 
 ## 0.2.0 — 2026-10-15
 

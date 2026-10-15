@@ -56,7 +56,7 @@ You need OpenDeck 2.14, [uv](https://docs.astral.sh/uv/) and Claude Code (or ano
 below). uv fetches a suitable Python by itself.
 
 ```sh
-claude mcp add opendeck --scope user -- uvx --from git+https://github.com/kastro5/opendeck-mcp@v0.2.0 opendeck-mcp
+claude mcp add opendeck --scope user -- uvx --from git+https://github.com/kastro5/opendeck-mcp@v0.3.0 opendeck-mcp
 ```
 
 Then restart Claude Code and ask it something like *"what's on my OpenDeck?"*.
@@ -79,7 +79,7 @@ The version is pinned in the command, so replace the registration with the new t
 
 ```sh
 claude mcp remove opendeck --scope user
-claude mcp add opendeck --scope user -- uvx --from git+https://github.com/kastro5/opendeck-mcp@v0.2.0 opendeck-mcp
+claude mcp add opendeck --scope user -- uvx --from git+https://github.com/kastro5/opendeck-mcp@v0.3.0 opendeck-mcp
 ```
 
 The first apply after an upgrade also updates the companion bridge plugin (see
@@ -95,7 +95,7 @@ Cursor, VS Code and others) is:
   "mcpServers": {
     "opendeck": {
       "command": "uvx",
-      "args": ["--from", "git+https://github.com/kastro5/opendeck-mcp@v0.2.0", "opendeck-mcp"]
+      "args": ["--from", "git+https://github.com/kastro5/opendeck-mcp@v0.3.0", "opendeck-mcp"]
     }
   }
 }
@@ -112,8 +112,8 @@ in; every request also needs a token.
 On the OpenDeck PC (Windows):
 
 ```sh
-uvx --from git+https://github.com/kastro5/opendeck-mcp@v0.2.0 opendeck-mcp install-autostart --host <tailscale-ip>
-uvx --from git+https://github.com/kastro5/opendeck-mcp@v0.2.0 opendeck-mcp token --host <tailscale-ip>
+uvx --from git+https://github.com/kastro5/opendeck-mcp@v0.3.0 opendeck-mcp install-autostart --host <tailscale-ip>
+uvx --from git+https://github.com/kastro5/opendeck-mcp@v0.3.0 opendeck-mcp token --host <tailscale-ip>
 ```
 
 The first command puts a small script in your Startup folder that starts the server, without a
