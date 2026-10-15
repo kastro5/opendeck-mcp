@@ -1,6 +1,6 @@
 [project]
 name = "opendeck-mcp"
-version = "0.1.0"
+version = "0.2.0"
 description = "MCP server for configuring OpenDeck (open-source Stream Deck software) in natural language"
 readme = "README.md"
 license = "MIT"
@@ -12,6 +12,7 @@ dependencies = [
     "psutil==7.2.2",
     "platformdirs==4.12.2",
     "pillow==12.3.0",
+    "websockets==15.0.1",
 ]
 
 [project.scripts]

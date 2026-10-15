@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.2.0 — 2026-10-15
+
+- **Instant edits.** `update_key` now changes a key's title, image and settings in the running
+  OpenDeck without restarting it, when the key is on the profile a connected device is showing.
+  Settings reach the plugin the same way OpenDeck's own settings panel sends them. Everything else
+  is still staged, and the result says which happened. A new `mode` parameter (`auto`, `live`,
+  `staged`) overrides the choice.
+- New `undo_live` tool: puts back the titles, images and settings changed by instant edits. Images
+  are saved as bytes before each edit, so a custom key image can always be restored.
+- New dependency: `websockets`.
+
 ## 0.1.0 — 2026-10-14
 
 First release.

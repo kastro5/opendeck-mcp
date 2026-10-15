@@ -24,7 +24,8 @@ Workflow:
    (0-based raw position), touch<N>, dial<N>, infobar<N>, and <slot>/child<N> inside multi/toggle actions.
 3. list_actions / describe_action before placing an action: describe_action explains its settings.
 4. Edit with set_key, update_key, clear_key, move_key, add_child, remove_child, set_multi_delays,
-   manage_profile, set_app_rule, set_plugin_settings, stage_plugin. These only STAGE changes.
+   manage_profile, set_app_rule, set_plugin_settings, stage_plugin. These STAGE changes, except that
+   update_key applies title/image/settings tweaks on the showing profile instantly (undo_live undoes them).
 5. preview_changes, show the user the summary, then apply_changes(confirm=true) once they agree.
    Applying restarts OpenDeck (a few seconds) and takes a backup; restore_backup undoes it.
 
@@ -151,11 +152,28 @@ def update_key(device: Device, slot: Annotated[str, Field(description="Slot, or 
                settings_replace: Annotated[dict[str, Any] | None, Field(
                    description="Replaces the settings entirely.")] = None,
                remove_settings: list[str] | None = None,
-               current_state: int | None = None) -> str:
+               current_state: int | None = None,
+               mode: Annotated[Literal["auto", "live", "staged"], Field(
+                   description="auto: apply instantly when possible, else stage; live: instantly or fail; "
+                               "staged: always stage.")] = "auto") -> str:
     """Change an existing key without replacing its action: title, title style, image, settings,
-    or which state it shows. Staged only."""
+    or which state it shows.
+
+    Title text, image and settings changes on the profile a connected device is showing apply
+    instantly, with no restart (undo with undo_live). Anything else (title style, current state,
+    another profile, a device with staged changes) is staged for apply_changes; the result says
+    which happened. A live settings change reaches the plugin as if edited in OpenDeck's own panel;
+    if that key's settings panel is open in OpenDeck, reopen it to see the change."""
     return edit_tools.update_key(paths(), device, slot, profile, state, title, title_style, image, settings_merge,
-                                 settings_replace, remove_settings, current_state)
+                                 settings_replace, remove_settings, current_state, mode)
+
+
+@mcp.tool(annotations=DESTRUCTIVE)
+def undo_live(count: Annotated[int, Field(description="How many of the latest live edits to undo.")] = 1) -> str:
+    """Undo the latest instant (live) edits made by update_key, newest first: titles, images and
+    settings go back to what they were. Staged changes and applied plans are undone with
+    discard_changes and restore_backup instead."""
+    return edit_tools.undo_live(paths(), count)
 
 
 @mcp.tool(annotations=STAGE)

@@ -20,7 +20,7 @@ people than anything else here.
 
 ## A. Features
 
-### A1. Instant edits without restarting OpenDeck ⭐
+### A1. Instant edits without restarting OpenDeck ⭐ — done in 0.2.0
 
 **What:** changes to *existing* keys take effect immediately: settings, title and image. Adding, removing
 or moving keys still goes through stage → apply → restart.
@@ -223,3 +223,8 @@ also targets the D200X.
   and `uni` have lowercase aliases.
 - httpx logs full URLs at INFO, and GitHub download URLs carry signed tokens, so keep it at WARNING.
 - MCP SDK 2.x: `from mcp.server.mcpserver import MCPServer` (FastMCP was renamed).
+- `setSettings` sent through `--process-message` only reaches the property inspector, never the plugin.
+  Send it over the plugin websocket after `registerPropertyInspector` with the full context as uuid.
+- OpenDeck marks only the *selected* profile as unsaved, so live edits elsewhere could be lost.
+- Key images live as files (`images/<dev>/<profile>/<ctx>/<state>.png`) and a new image overwrites them,
+  so anything that changes an image live must save the old bytes first.

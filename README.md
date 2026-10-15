@@ -36,6 +36,8 @@ devices such as the [Ulanzi D200H/D200X](https://github.com/kastro5/opendeck-ula
   - install, update and remove plugins;
   - read and write plugin settings, with secrets redacted;
   - read plugin logs.
+- **Instant edits:** title, image and settings tweaks to a key on the profile a device is showing
+  apply at once, with no restart; `undo_live` takes them back.
 - **Undo:** every apply takes a backup, and `restore_backup` puts things back.
 
 ## Install
@@ -43,7 +45,7 @@ devices such as the [Ulanzi D200H/D200X](https://github.com/kastro5/opendeck-ula
 You need OpenDeck 2.14, [uv](https://docs.astral.sh/uv/) and Claude Code.
 
 ```sh
-claude mcp add opendeck --scope user -- uvx --from git+https://github.com/kastro5/opendeck-mcp@v0.1.0 opendeck-mcp
+claude mcp add opendeck --scope user -- uvx --from git+https://github.com/kastro5/opendeck-mcp@v0.2.0 opendeck-mcp
 ```
 
 Then restart Claude Code and ask it something like *"what's on my OpenDeck?"*.
@@ -67,6 +69,10 @@ Just describe what you want. Under the hood, the agent:
 3. stages edits with `set_key`, `add_child`, `manage_profile` and so on;
 4. calls `preview_changes`, shows you the diff, and waits for your OK;
 5. calls `apply_changes`, which restarts OpenDeck for a few seconds and reports the backup id.
+
+Small tweaks skip all that. Changing an existing key's title, image or settings on the profile a
+connected device is showing happens instantly, without a restart, and `undo_live` reverses it. Title
+style, the shown state, other profiles and every structural change still go through staging.
 
 Keys are addressed the way `show_profile` draws them:
 
@@ -110,6 +116,15 @@ while it runs. So `opendeck-mcp` works on the files, with OpenDeck stopped:
 5. **Images.** New key images are stored as `data:` URLs. OpenDeck accepts these and converts them to
    files itself on its next save.
 
+### Instant edits
+
+Titles and images are sent to the running OpenDeck through its command line (`--process-message`),
+as `setTitle` and `setImage` events. Settings go over OpenDeck's local plugin websocket, posing as
+the key's settings panel, because that is the only path on which OpenDeck tells the plugin its
+settings changed. OpenDeck is then asked to save, and the file is checked. Before each edit the old
+titles, images (as bytes) and settings are written to `live_journal.jsonl` in the server's data
+folder, which `undo_live` replays.
+
 ## Safety
 
 - **Nothing changes until you confirm.** Staging tools never touch OpenDeck. `apply_changes`,
@@ -136,7 +151,7 @@ while it runs. So `opendeck-mcp` works on the files, with OpenDeck stopped:
 |---|---|
 | Read | `get_overview`, `show_profile`, `list_actions`, `describe_action`, `get_plugin_settings`, `read_logs`, `get_app_rules`, `find_plugins`, `preview_changes`, `list_backups` |
 | Stage | `set_key`, `update_key`, `clear_key`, `move_key`, `add_child`, `remove_child`, `set_multi_delays`, `manage_profile`, `set_app_rule`, `set_plugin_settings`, `stage_plugin`, `discard_changes`, `set_device_layout` |
-| Apply | `apply_changes`, `restore_backup` |
+| Apply | `apply_changes`, `restore_backup`, `undo_live` |
 
 ## Limitations
 
@@ -149,7 +164,10 @@ while it runs. So `opendeck-mcp` works on the files, with OpenDeck stopped:
   Code`). The easiest way to learn a name is to add one rule in OpenDeck's UI and look at `get_app_rules`.
 - **Tested platform.** Tested on Windows 11 with OpenDeck 2.14.1. The macOS and Linux paths and process
   handling are written but untested.
-- **No live control.** It doesn't press keys or switch profiles live; it configures.
+- **Limited live control.** Title, image and settings edits apply instantly; everything else needs
+  a restart. It doesn't press keys or switch profiles live.
+- **An open settings panel goes quiet.** After an instant settings edit, a settings panel already open
+  in OpenDeck's window for that key stops updating until it's reopened.
 
 ## Development
 
