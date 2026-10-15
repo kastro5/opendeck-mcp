@@ -14,6 +14,7 @@ devices such as the [Ulanzi D200H/D200X](https://github.com/kastro5/opendeck-ula
 
 - [What it can do](#what-it-can-do)
 - [Install](#install)
+  - [From another computer](#from-another-computer)
 - [Using it](#using-it)
 - [How it works](#how-it-works)
 - [Safety](#safety)
@@ -64,6 +65,40 @@ environment variables (`claude mcp add … -e NAME=value`):
 | `OPENDECK_LOG_DIR` | `%LOCALAPPDATA%\opendeck\logs` |
 | `OPENDECK_MCP_DATA_DIR` | `%LOCALAPPDATA%\opendeck-mcp` (the server's own plan, backups and cache) |
 | `OPENDECK_MCP_HA_VERIFY_TLS` | `1`; set `0` for a Home Assistant on https with a self-signed certificate |
+| `OPENDECK_MCP_TOKEN` | the HTTP token (default: generated once, see below) |
+
+### From another computer
+
+The server has to run on the PC that runs OpenDeck, inside your logged-in desktop session: it
+restarts OpenDeck and talks to it through its command line, which doesn't work from a service or an
+SSH session. To use it from another machine (a laptop, a dev VM), serve it over HTTP there and
+connect to it. [Tailscale](https://tailscale.com) or another private network is the recommended way
+in; every request also needs a token.
+
+On the OpenDeck PC (Windows):
+
+```sh
+uvx --from git+https://github.com/kastro5/opendeck-mcp@v0.2.0 opendeck-mcp install-autostart --host <tailscale-ip>
+uvx --from git+https://github.com/kastro5/opendeck-mcp@v0.2.0 opendeck-mcp token --host <tailscale-ip>
+```
+
+The first command puts a small script in your Startup folder that starts the server, without a
+window, at every logon, and starts it now. The second prints the command to run on the other
+machine:
+
+```sh
+claude mcp add --transport http opendeck http://<tailscale-ip>:8765/mcp --header "Authorization: Bearer <token>"
+```
+
+- `tailscale ip -4` shows the address. The server refuses `0.0.0.0` (every network) unless you add
+  `--allow-all-interfaces`.
+- To connect by name (e.g. a MagicDNS name), add `--allowed-host <name>`; other `Host` headers are
+  rejected.
+- `opendeck-mcp token --reset` makes a new token, and `opendeck-mcp uninstall-autostart` removes
+  the autostart and stops the server.
+- Windows Firewall must allow inbound TCP 8765 on that network; it asks the first time if it isn't
+  already allowed.
+- On Linux or macOS, run `opendeck-mcp serve --host <ip>` from a systemd user service or LaunchAgent.
 
 ## Using it
 

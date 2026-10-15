@@ -19,6 +19,12 @@
   titles with their font, colour, stroke and alignment, background colours, the wide key, dials and
   touchpoints), with staged keys outlined, or before and after side by side. OpenDeck's title fonts
   are downloaded once from Google Fonts; offline, a system font with the same metrics is used.
+- **HTTP transport.** `opendeck-mcp serve --host <ip>` serves over streamable HTTP for clients on
+  other machines, with a bearer token on every request and Host-header checks, and it refuses to
+  listen on every interface unless told to. `install-autostart` starts it hidden at each Windows
+  logon (from the Startup folder; no admin rights), `token` prints the client's `claude mcp add`
+  command, and `uninstall-autostart` removes it. Running `opendeck-mcp` with no arguments still
+  serves stdio.
 - New dependencies: `websockets`, `resvg-py` (SVG icons in previews).
 
 ## 0.1.0 — 2026-10-14

@@ -128,7 +128,7 @@ Input keys behind `confirm`. **Effort:** small.
 
 ## B. Distribution
 
-### B1. HTTP transport (prerequisite for B2 and remote use)
+### B1. HTTP transport (prerequisite for B2 and remote use) — done in 0.2.0
 
 - `opendeck-mcp --http --host <addr> --port 8765 --token <secret>` using MCPServer's streamable-http
   transport.
@@ -223,6 +223,11 @@ also targets the D200X.
   and `uni` have lowercase aliases.
 - httpx logs full URLs at INFO, and GitHub download URLs carry signed tokens, so keep it at WARNING.
 - MCP SDK 2.x: `from mcp.server.mcpserver import MCPServer` (FastMCP was renamed).
+- A Task Scheduler ONLOGON trigger needs admin rights ("Access is denied"); a .vbs in the Startup
+  folder starts the HTTP server hidden at logon without them.
+- On Windows, `Path.write_text` turns "
+" into "
+"; write bytes when line endings matter.
 - Some plugin icons are 16-bit greyscale PNGs (Home Assistant's): Pillow's plain `convert("RGBA")` turns
   them solid white, so scale to 8 bits first.
 - OpenDeck's title fonts are compiled into its executable; Liberation Sans/Serif are Arimo/Tinos, and all
