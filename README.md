@@ -14,12 +14,15 @@ devices such as the [Ulanzi D200H/D200X](https://github.com/kastro5/opendeck-ula
 
 - [What it can do](#what-it-can-do)
 - [Install](#install)
+  - [Upgrading](#upgrading)
+  - [Other MCP clients](#other-mcp-clients)
   - [From another computer](#from-another-computer)
 - [Using it](#using-it)
 - [How it works](#how-it-works)
 - [Safety](#safety)
 - [Tools](#tools)
 - [Limitations](#limitations)
+- [Troubleshooting](#troubleshooting)
 - [Development](#development)
 
 ## What it can do
@@ -47,7 +50,8 @@ devices such as the [Ulanzi D200H/D200X](https://github.com/kastro5/opendeck-ula
 
 ## Install
 
-You need OpenDeck 2.14, [uv](https://docs.astral.sh/uv/) and Claude Code.
+You need OpenDeck 2.14, [uv](https://docs.astral.sh/uv/) and Claude Code (or another MCP client, see
+below). uv fetches a suitable Python by itself.
 
 ```sh
 claude mcp add opendeck --scope user -- uvx --from git+https://github.com/kastro5/opendeck-mcp@v0.2.0 opendeck-mcp
@@ -66,6 +70,34 @@ environment variables (`claude mcp add … -e NAME=value`):
 | `OPENDECK_MCP_DATA_DIR` | `%LOCALAPPDATA%\opendeck-mcp` (the server's own plan, backups and cache) |
 | `OPENDECK_MCP_HA_VERIFY_TLS` | `1`; set `0` for a Home Assistant on https with a self-signed certificate |
 | `OPENDECK_MCP_TOKEN` | the HTTP token (default: generated once, see below) |
+
+### Upgrading
+
+The version is pinned in the command, so replace the registration with the new tag:
+
+```sh
+claude mcp remove opendeck --scope user
+claude mcp add opendeck --scope user -- uvx --from git+https://github.com/kastro5/opendeck-mcp@v0.2.0 opendeck-mcp
+```
+
+The first apply after an upgrade also updates the companion bridge plugin (see
+[How it works](#how-it-works)), in the same restart.
+
+### Other MCP clients
+
+Any client that can start a stdio server works. The usual JSON configuration (Claude Desktop,
+Cursor, VS Code and others) is:
+
+```json
+{
+  "mcpServers": {
+    "opendeck": {
+      "command": "uvx",
+      "args": ["--from", "git+https://github.com/kastro5/opendeck-mcp@v0.2.0", "opendeck-mcp"]
+    }
+  }
+}
+```
 
 ### From another computer
 
@@ -154,6 +186,7 @@ while it runs. So `opendeck-mcp` works on the files, with OpenDeck stopped:
 4. **Device geometry.** OpenDeck doesn't store a device's rows × columns anywhere, so the first apply also
    installs a tiny companion plugin, *OpenDeck MCP Bridge* (no actions, about 60 lines of JavaScript). It
    records the geometry OpenDeck reports to plugins into its own settings file, where the server reads it.
+   It's versioned with the server, so a new release updates it on its next apply.
 5. **Images.** New key images are stored as `data:` URLs. OpenDeck accepts these and converts them to
    files itself on its next save.
 
@@ -186,8 +219,23 @@ folder, which `undo_live` replays.
 - **Home Assistant.** The Home Assistant tools reuse the server URL and access token saved by the
   Home Assistant plugin. The token is only sent to that server, never shown. `ha_call_service` acts
   on your real home, so it needs a second call with `confirm=true`.
+- **Instant edits aren't backed up.** They don't go through apply, so instead the previous titles,
+  images and settings are kept in a journal (the last 200 edits) that `undo_live` replays.
+- **The HTTP token is a key to your deck.** Anyone with it who can reach the port can change keys,
+  install plugins and, through Run Command keys, run programs. Keep the server on a private address,
+  and `opendeck-mcp token --reset` if the token leaks.
 - **Version check.** Apply refuses to run on OpenDeck versions other than 2.14.x unless you allow it
   explicitly.
+
+### Network and files
+
+- **Internet:** only the plugin catalogues and plugin downloads (`find_plugins`, `stage_plugin`), and
+  the title fonts for `render_profile`, fetched once from jsDelivr/Google Fonts. Nothing else, and no
+  telemetry.
+- **Local network:** your Home Assistant, only when the Home Assistant tools are used.
+- **Files** in `%LOCALAPPDATA%\opendeck-mcp`: `plan.json` (staged changes), `backups/`,
+  `live_journal.jsonl`, `cache/` (catalogues, fonts), `device_overrides.json`, and for HTTP
+  `http_token` and `http.log`. Delete the folder to reset everything.
 
 ## Tools
 
@@ -207,12 +255,30 @@ folder, which `undo_live` replays.
   keys. If those aren't enough, place the action and finish setting it up in OpenDeck's UI.
 - **App rule names.** App rules match the app's display name as OpenDeck sees it (e.g. `Visual Studio
   Code`). The easiest way to learn a name is to add one rule in OpenDeck's UI and look at `get_app_rules`.
-- **Tested platform.** Tested on Windows 11 with OpenDeck 2.14.1. The macOS and Linux paths and process
-  handling are written but untested.
+- **Tested platform.** Tested on Windows 11 with OpenDeck 2.14.1, a Ulanzi D200H and Home Assistant.
+  The macOS and Linux paths and process handling are written but untested.
 - **Limited live control.** Title, image and settings edits apply instantly; everything else needs
   a restart. It doesn't press keys or switch profiles live.
+- **Pictures are close, not exact.** `render_profile` can't see images a plugin draws while running (a
+  clock, a live Home Assistant state) unless OpenDeck has saved them, and OpenDeck's own Multi/Toggle
+  Action icons are drawn as look-alikes.
 - **An open settings panel goes quiet.** After an instant settings edit, a settings panel already open
   in OpenDeck's window for that key stops updating until it's reopened.
+
+## Troubleshooting
+
+- **"OpenDeck's executable wasn't found" / "config folder wasn't found"**: set `OPENDECK_EXE` /
+  `OPENDECK_CONFIG_DIR` (see [Install](#install)).
+- **Apply refuses: untested OpenDeck version.** Check the changelog for a release that supports
+  yours; `apply_changes(allow_untested_version=true)` overrides it at your own risk, with a backup.
+- **Apply reports a conflict.** A key you staged was changed in OpenDeck meanwhile. Look at
+  `preview_changes`, then discard and re-stage it, or apply with `on_conflict="skip"`.
+- **A device shows "geometry unknown".** It's learned by the bridge plugin, installed with the first
+  apply. Until then `set_device_layout` sets rows and columns by hand.
+- **Undo an apply:** `list_backups`, then `restore_backup`.
+- **HTTP client gets 401 / 421.** 401: wrong or missing token (`opendeck-mcp token`). 421: the client
+  used a host name the server doesn't know; add it with `--allowed-host`. The server logs to
+  `http.log` in its data folder.
 
 ## Development
 

@@ -25,7 +25,11 @@
   logon (from the Startup folder; no admin rights), `token` prints the client's `claude mcp add`
   command, and `uninstall-autostart` removes it. Running `opendeck-mcp` with no arguments still
   serves stdio.
+- README: upgrading, other MCP clients, network use and stored files, troubleshooting.
 - New dependencies: `websockets`, `resvg-py` (SVG icons in previews).
+
+Upgrading: re-register with `@v0.2.0` (see the README). The bridge plugin updates itself on the next
+apply.
 
 ## 0.1.0 — 2026-10-14
 

@@ -1,7 +1,7 @@
 # opendeck-mcp roadmap
 
-Notes for picking this up later. State as of **2026-10-14**: v0.1.0 published, tested live on a Ulanzi
-D200H with OpenDeck 2.14.1 on Windows 11, and registered in Claude Code as `opendeck`.
+Notes for picking this up later. State as of **2026-10-15**: v0.2.0 published (A1, A2, A3 and B1
+done), tested live on a Ulanzi D200H with OpenDeck 2.14.1 on Windows 11.
 
 ## Recommended order
 
@@ -226,7 +226,8 @@ also targets the D200X.
 - A Task Scheduler ONLOGON trigger needs admin rights ("Access is denied"); a .vbs in the Startup
   folder starts the HTTP server hidden at logon without them.
 - On Windows, `Path.write_text` turns "
-" into "
+" into "
+
 "; write bytes when line endings matter.
 - Some plugin icons are 16-bit greyscale PNGs (Home Assistant's): Pillow's plain `convert("RGBA")` turns
   them solid white, so scale to 8 bits first.
