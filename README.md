@@ -42,6 +42,8 @@ devices such as the [Ulanzi D200H/D200X](https://github.com/kastro5/opendeck-ula
   - read plugin logs.
 - **Instant edits:** title, image and settings tweaks to a key on the profile a device is showing
   apply at once, with no restart; `undo_live` takes them back.
+- **Icons and folders:** make key images from text, emoji, ~3,400 brand logos or ~7,400 symbols, and
+  folder keys that open a sub-profile with a Back key.
 - **Pictures:** `render_profile` shows the deck as OpenDeck draws it, with staged changes outlined or
   before and after side by side, so you can check a layout before applying it.
 - **Home Assistant:** find entities by name, area or domain, and get ready-made settings for a key
@@ -230,19 +232,21 @@ folder, which `undo_live` replays.
 ### Network and files
 
 - **Internet:** only the plugin catalogues and plugin downloads (`find_plugins`, `stage_plugin`), and
-  the title fonts for `render_profile`, fetched once from jsDelivr/Google Fonts. Nothing else, and no
-  telemetry.
+  the title fonts for `render_profile` and the icon sets for `make_icon`, fetched once each from
+  jsDelivr and cached. Nothing else, and no telemetry.
 - **Local network:** your Home Assistant, only when the Home Assistant tools are used.
 - **Files** in `%LOCALAPPDATA%\opendeck-mcp`: `plan.json` (staged changes), `backups/`,
-  `live_journal.jsonl`, `cache/` (catalogues, fonts), `device_overrides.json`, and for HTTP
+  `live_journal.jsonl`, `icons/` (made by `make_icon`), `cache/` (catalogues, fonts, icon sets),
+  `device_overrides.json`, and for HTTP
   `http_token` and `http.log`. Delete the folder to reset everything.
 
 ## Tools
 
 | Kind | Tools |
 |---|---|
-| Read | `get_overview`, `show_profile`, `render_profile`, `list_actions`, `describe_action`, `get_plugin_settings`, `read_logs`, `get_app_rules`, `find_plugins`, `preview_changes`, `list_backups` |
-| Stage | `set_key`, `update_key`, `clear_key`, `move_key`, `add_child`, `remove_child`, `set_multi_delays`, `manage_profile`, `set_app_rule`, `set_plugin_settings`, `stage_plugin`, `discard_changes`, `set_device_layout` |
+| Read | `get_overview`, `show_profile`, `render_profile`, `list_actions`, `describe_action`, `get_plugin_settings`, `read_logs`, `get_app_rules`, `find_plugins`, `find_icons`, `preview_changes`, `list_backups` |
+| Stage | `set_key`, `update_key`, `clear_key`, `move_key`, `add_child`, `remove_child`, `set_multi_delays`, `make_folder`, `manage_profile`, `set_app_rule`, `set_plugin_settings`, `stage_plugin`, `discard_changes`, `set_device_layout` |
+| Icons | `make_icon` (saves a PNG to pass as `image`) |
 | Apply | `apply_changes`, `restore_backup`, `undo_live` |
 | Home Assistant | `ha_search`, `ha_describe_entity`, `ha_call_service` |
 
@@ -296,3 +300,9 @@ Test fixtures are real OpenDeck profiles with every setting value replaced
 ## License
 
 MIT. Not affiliated with OpenDeck or Elgato.
+
+Icons and fonts are downloaded at run time, not bundled:
+[Material Design Icons](https://pictogrammers.com/library/mdi/) (Apache 2.0),
+[Simple Icons](https://simpleicons.org) (CC0; brand logos remain their owners' trademarks),
+[Twemoji](https://github.com/jdecked/twemoji) (graphics CC-BY 4.0, © Twitter/X and contributors), and
+OpenDeck's title fonts from [Google Fonts](https://github.com/google/fonts) (OFL).

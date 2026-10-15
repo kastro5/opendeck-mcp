@@ -98,13 +98,13 @@ titles (font, colour, alignment, stroke), background colours, the wide key, dial
 
 **Effort:** medium. Fidelity can grow over time; start with icons + titles.
 
-### A4. Generated icons
+### A4. Generated icons — done in 0.3.0
 
 `make_icon(text|emoji|brand, fg, bg, style)` → `data:` URL usable with `set_key`/`update_key`. Brand
 icons from Simple Icons (CC0 SVGs; download on demand and cache). Pairs naturally with A3. **Effort:**
 small to medium.
 
-### A5. Folder keys
+### A5. Folder keys — done in 0.3.0
 
 One tool: `make_folder(device, slot, name, back_slot="r1c1")`. It creates a profile `<current>/<name>`,
 or a top-level one if the current profile is already in a folder, since OpenDeck allows only one folder

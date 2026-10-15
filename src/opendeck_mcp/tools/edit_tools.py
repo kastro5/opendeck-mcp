@@ -33,7 +33,7 @@ def describe(record: dict) -> str:
         "add_child": lambda: f"add {a.get('action_label', a.get('action'))} to {slot}",
         "set_multi_delays": lambda: f"delays of {slot} → {a['delays']}",
         "move_key": lambda: f"{a.get('mode', 'move')} {slot} → {a.get('to_label')}"
-                            + (f" ({a.get('to_device') or ''} {a.get('to_profile') or ''})".rstrip()
+                            + (" (" + " ".join(x for x in (a.get("to_device"), a.get("to_profile")) if x) + ")"
                                if a.get("to_device") or a.get("to_profile") else ""),
         "create_profile": lambda: f"create profile {a['profile']}"
                                   + (f" from {a['copy_from']}" if a.get("copy_from") else ""),
@@ -461,3 +461,48 @@ def discard_changes(paths: Paths, which: Any) -> str:
         plan.save(paths, current)
     dropped = [describe(r) for r in records if r["id"] in ids]
     return "Discarded: " + "; ".join(dropped) + f". {len(keep)} op(s) still staged."
+
+
+# -- folders ------------------------------------------------------------------------- #
+
+SWITCH = "com.amansprojects.starterpack.switchprofile"
+
+
+def folder_profile_id(current: str, name: str) -> str:
+    """OpenDeck allows one folder level, so a folder made from inside a folder becomes its sibling."""
+    return check_profile_id(f"{current.split('/')[0]}/{name}")
+
+
+def make_folder(paths: Paths, device: str, slot: str, name: str, profile: str | None, back_slot: str,
+                image: str | None, back_image: str | None) -> str:
+    ws, base = _base(paths, device, profile)
+    current = base["profile"]
+    new = folder_profile_id(current, name)
+    if ws.has_profile(base["device"], new):
+        raise ProfileError(f"profile {new!r} already exists; open it with a Switch Profile key instead")
+    args = _slot_args(ws, base, slot)
+    if args.get("child"):
+        raise ProfileError("a folder key must be a whole key, not a child")
+    if ws.get_slot(base["device"], current, args["controller"], args["position"]) is not None:
+        raise ProfileError(f"{args['slot_label']} isn't empty; clear it first or pick another slot")
+    if back_image is None:
+        from ..core import icons
+
+        try:
+            spec = icons.parse("mdi:arrow-left")
+            back_image = str(icons.save(paths, icons.render(paths, spec, None, None, 0.62), spec, None, None, 0.62))
+        except Exception:  # offline: the Switch Profile action's own icon will do
+            back_image = None
+    elif back_image == "default":
+        back_image = None
+    lines = [manage_profile(paths, base["device"], "create", new, None, None).splitlines()[0]]
+    # Titles at the bottom, small, so they don't cover the icon (Switch Profile centres them).
+    under = {"alignment": "bottom", "size": 11}
+    lines.append(set_key(paths, base["device"], slot, SWITCH, current, name,
+                         {"device": base["device"], "profile": new}, image, under).splitlines()[0])
+    lines.append(set_key(paths, base["device"], back_slot, SWITCH, new, "Back",
+                         {"device": base["device"], "profile": current}, back_image, under).splitlines()[0])
+    lines.append(f"Folder {new!r}: {args['slot_label']} opens it, {back_slot} inside goes back to {current!r}. "
+                 "Fill it with set_key(profile=" + repr(new) + ", ...).")
+    lines.append(STAGED_ONLY)
+    return "\n".join(lines)

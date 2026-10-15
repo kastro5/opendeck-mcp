@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.3.0 — unreleased
+
+- **Icons.** `make_icon` makes a key image from text, an emoji (Twemoji), a brand logo (Simple
+  Icons, in the brand's colour) or a symbol (Material Design Icons), and saves it as a PNG to pass
+  as `image`. `find_icons` searches the icon sets by name, alias and tag.
+- **Folders.** `make_folder` creates a sub-profile, a key that opens it and a Back key inside, with
+  titles placed under the icons.
+- Staged moves to another profile no longer show a stray space in their description.
+
 ## 0.2.0 — 2026-10-15
 
 - **Instant edits.** `update_key` now changes a key's title, image and settings in the running

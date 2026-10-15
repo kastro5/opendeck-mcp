@@ -13,7 +13,7 @@ from pydantic import Field
 from . import __version__
 from .core.paths import Paths, discover
 from .runtime import applier
-from .tools import edit_tools, ha_tools, plugin_tools, preview_tools, read_tools
+from .tools import edit_tools, ha_tools, icon_tools, plugin_tools, preview_tools, read_tools
 from .tools.view import View
 
 INSTRUCTIONS = """\
@@ -35,6 +35,7 @@ Secrets in plugin settings are shown as «redacted»; passing «redacted» back 
 Run Command / Simulate Input keys execute things on the user's computer: say so when staging them.
 Installing plugins runs third-party code: always get the user's explicit go-ahead.
 Home Assistant keys: ha_search finds entities, ha_describe_entity gives ready-made key settings.
+Key images: make_icon (find_icons for names) makes one and returns a path to pass as `image`.
 """
 
 log = logging.getLogger("opendeck_mcp")
@@ -180,6 +181,21 @@ def undo_live(count: Annotated[int, Field(description="How many of the latest li
 
 
 @mcp.tool(annotations=STAGE)
+def make_folder(device: Device,
+                slot: Annotated[str, Field(description="Empty key that will open the folder.")],
+                name: Annotated[str, Field(description="Folder name, also the key's title.")],
+                profile: Profile = None,
+                back_slot: Annotated[str, Field(description="Key in the folder that goes back.")] = "r1c1",
+                image: Image = None,
+                back_image: Annotated[str | None, Field(
+                    description="Back key image; default a generated arrow, 'default' for the action's own.")]
+                = None) -> str:
+    """Make a folder: a new profile opened by a key on this one, with a Back key inside. OpenDeck
+    allows one folder level, so it's created as '<this profile's folder>/<name>'. Staged only."""
+    return edit_tools.make_folder(paths(), device, slot, name, profile, back_slot, image, back_image)
+
+
+@mcp.tool(annotations=STAGE)
 def clear_key(device: Device, slot: Slot, profile: Profile = None) -> str:
     """Remove the action from a key or dial. Staged only."""
     return edit_tools.clear_key(paths(), device, slot, profile)
@@ -293,6 +309,34 @@ def render_profile(device: Device, profile: Profile = None,
     changes outlined. Use it to check a layout before applying, or to show the user."""
     data, caption = preview_tools.render_profile(paths(), device, profile, staged, compare)
     return [ImageResult(data=data, format="png"), caption]
+
+
+@mcp.tool(annotations=ToolAnnotations(read_only_hint=False, destructive_hint=False, open_world_hint=True))
+def make_icon(icon: Annotated[str, Field(description="text:Hi (use \n for a second line), emoji:🔥, "
+                                                     "brand:github (Simple Icons slug) or mdi:lightbulb-on "
+                                                     "(Material Design Icons name). Names: find_icons.")],
+              background: Annotated[str | None, Field(description="#RRGGBB; default dark grey, or the brand "
+                                                                  "colour for brand: icons.")] = None,
+              colour: Annotated[str | None, Field(description="#RRGGBB for text/symbol; default black or white, "
+                                                              "whichever reads better.")] = None,
+              scale: Annotated[float | None, Field(description="Size of the art, 0.2-1.0.")] = None,
+              font: Annotated[str | None, Field(description="Font for text: icons (OpenDeck's title fonts).")]
+              = None,
+              style: Annotated[str | None, Field(description="Regular, Bold, Italic or Bold Italic.")] = None
+              ) -> list:
+    """Make a key image: text, an emoji, a brand logo or a generic symbol on a coloured square.
+    Returns a preview and a file path to pass as `image` to set_key / update_key / add_child."""
+    data, text = icon_tools.make_icon(paths(), icon, background, colour, scale, font, style)
+    return [ImageResult(data=data, format="png"), text]
+
+
+@mcp.tool(annotations=ToolAnnotations(read_only_hint=True, open_world_hint=True))
+def find_icons(query: Annotated[str, Field(description="Words, e.g. 'microphone off' or 'spotify'.")],
+               icon_set: Annotated[Literal["all", "mdi", "brand"], Field(
+                   description="mdi: ~7,400 generic symbols; brand: ~3,400 logos (Simple Icons).")] = "all",
+               limit: int = 20) -> str:
+    """Find icon names for make_icon."""
+    return icon_tools.find_icons(paths(), query, icon_set, limit)
 
 
 # -- home assistant --------------------------------------------------------------------- #
