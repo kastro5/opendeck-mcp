@@ -149,6 +149,10 @@ Small tweaks skip all that. Changing an existing key's title, image or settings 
 connected device is showing happens instantly, without a restart, and `undo_live` reverses it. Title
 style, the shown state, other profiles and every structural change still go through staging.
 
+For example, *"make a Fusion 360 profile with keys for my most-used sketch and solid tools, put the
+rest in a folder, and switch to it whenever Fusion is in front"* builds a profile of Simulate Input
+keys sending Fusion's shortcuts, with icons from `make_icon`, a "More" folder and the app rule.
+
 Keys are addressed the way `show_profile` draws them:
 
 ```
@@ -257,8 +261,9 @@ folder, which `undo_live` replays.
 - **Some settings need examples.** Settings are known in detail for OpenDeck's own actions and the Starter
   Pack. For other plugins, the agent works from hints on the plugin's settings page and from your existing
   keys. If those aren't enough, place the action and finish setting it up in OpenDeck's UI.
-- **App rule names.** App rules match the app's display name as OpenDeck sees it (e.g. `Visual Studio
-  Code`). The easiest way to learn a name is to add one rule in OpenDeck's UI and look at `get_app_rules`.
+- **App rule names.** App rules match the name OpenDeck gives the focused app: on Windows the
+  executable's description (e.g. `Autodesk Fusion`, `Visual Studio Code`), otherwise its file name.
+  `get_app_rules` lists the exact names of the apps you have open.
 - **Tested platform.** Tested on Windows 11 with OpenDeck 2.14.1, a Ulanzi D200H and Home Assistant.
   The macOS and Linux paths and process handling are written but untested.
 - **Limited live control.** Title, image and settings edits apply instantly; everything else needs

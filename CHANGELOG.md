@@ -7,6 +7,8 @@
   as `image`. `find_icons` searches the icon sets by name, alias and tag.
 - **Folders.** `make_folder` creates a sub-profile, a key that opens it and a Back key inside, with
   titles placed under the icons.
+- `get_app_rules` lists the exact names of the apps you have open, as OpenDeck matches them (the
+  executable's description on Windows), so app rules no longer need a trip through OpenDeck's UI.
 - Staged moves to another profile no longer show a stray space in their description.
 
 ## 0.2.0 — 2026-10-15

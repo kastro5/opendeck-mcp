@@ -191,13 +191,21 @@ def read_logs(view: View, plugin: str | None, lines: int, grep: str | None) -> s
     return f"{path} (last {len(tail)} lines{', filtered' if grep else ''}):\n{body}"
 
 
-def get_app_rules(view: View) -> str:
+def get_app_rules(view: View, running: bool = True) -> str:
     rules = view.app_rules()
     if not rules:
-        return ("No automatic profile switching rules. Add one with set_app_rule (app names are the "
-                "application's display name, e.g. 'Chatterino', 'Visual Studio Code').")
-    lines = ["Automatic profile switching (when an app is focused, switch these devices):"]
-    for app, mapping in sorted(rules.items()):
-        name = "(any other app)" if app == "opendeck_default" else app
-        lines.append(f"- {name}: " + ", ".join(f"{d} → {p}" for d, p in mapping.items()))
+        lines = ["No automatic profile switching rules yet. Add one with set_app_rule."]
+    else:
+        lines = ["Automatic profile switching (when an app is focused, switch these devices):"]
+        for app, mapping in sorted(rules.items()):
+            name = "(any other app)" if app == "opendeck_default" else app
+            lines.append(f"- {name}: " + ", ".join(f"{d} → {p}" for d, p in mapping.items()))
+    if running:
+        from ..core.apps import running_app_names
+
+        names = running_app_names()
+        if names:
+            lines += ["", "Names to use for apps running now (exactly as OpenDeck matches them): "
+                      + ", ".join(names)]
+    lines.append("set_app_rule(app='opendeck_default', ...) sets the profile for every app without a rule.")
     return "\n".join(lines)
