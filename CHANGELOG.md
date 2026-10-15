@@ -15,7 +15,11 @@
   The server uses the login already saved in the Home Assistant plugin, and the token never appears
   in any output.
 - `describe_action` now explains the Home Assistant plugin's key settings.
-- New dependency: `websockets`.
+- **Pictures of the deck.** `render_profile` draws a profile the way OpenDeck draws it (icons,
+  titles with their font, colour, stroke and alignment, background colours, the wide key, dials and
+  touchpoints), with staged keys outlined, or before and after side by side. OpenDeck's title fonts
+  are downloaded once from Google Fonts; offline, a system font with the same metrics is used.
+- New dependencies: `websockets`, `resvg-py` (SVG icons in previews).
 
 ## 0.1.0 — 2026-10-14
 

@@ -5,6 +5,7 @@ from __future__ import annotations
 import logging
 from typing import Annotated, Any, Literal
 
+from mcp.server.mcpserver import Image as ImageResult
 from mcp.server.mcpserver import MCPServer
 from mcp.types import ToolAnnotations
 from pydantic import Field
@@ -12,7 +13,7 @@ from pydantic import Field
 from . import __version__
 from .core.paths import Paths, discover
 from .runtime import applier
-from .tools import edit_tools, ha_tools, plugin_tools, read_tools
+from .tools import edit_tools, ha_tools, plugin_tools, preview_tools, read_tools
 from .tools.view import View
 
 INSTRUCTIONS = """\
@@ -26,7 +27,8 @@ Workflow:
 4. Edit with set_key, update_key, clear_key, move_key, add_child, remove_child, set_multi_delays,
    manage_profile, set_app_rule, set_plugin_settings, stage_plugin. These STAGE changes, except that
    update_key applies title/image/settings tweaks on the showing profile instantly (undo_live undoes them).
-5. preview_changes, show the user the summary, then apply_changes(confirm=true) once they agree.
+5. preview_changes (and render_profile for a picture), show the user, then apply_changes(confirm=true)
+   once they agree.
    Applying restarts OpenDeck (a few seconds) and takes a backup; restore_backup undoes it.
 
 Secrets in plugin settings are shown as «redacted»; passing «redacted» back keeps the stored value.
@@ -280,6 +282,17 @@ def discard_changes(which: Annotated[str | list[str], Field(
         description="'all', 'last', or staged op ids like ['op3', 'op5'] (see preview_changes).")] = "all") -> str:
     """Drop staged changes without applying them."""
     return edit_tools.discard_changes(paths(), which)
+
+
+@mcp.tool(annotations=READ)
+def render_profile(device: Device, profile: Profile = None,
+                   staged: Annotated[bool, Field(description="Include staged changes (outlined).")] = True,
+                   compare: Annotated[bool, Field(description="Now and after-apply side by side.")] = False
+                   ) -> list:
+    """A picture of the deck as OpenDeck draws it: icons, titles, colours, dials, with staged
+    changes outlined. Use it to check a layout before applying, or to show the user."""
+    data, caption = preview_tools.render_profile(paths(), device, profile, staged, compare)
+    return [ImageResult(data=data, format="png"), caption]
 
 
 # -- home assistant --------------------------------------------------------------------- #

@@ -38,6 +38,8 @@ devices such as the [Ulanzi D200H/D200X](https://github.com/kastro5/opendeck-ula
   - read plugin logs.
 - **Instant edits:** title, image and settings tweaks to a key on the profile a device is showing
   apply at once, with no restart; `undo_live` takes them back.
+- **Pictures:** `render_profile` shows the deck as OpenDeck draws it, with staged changes outlined or
+  before and after side by side, so you can check a layout before applying it.
 - **Home Assistant:** find entities by name, area or domain, and get ready-made settings for a key
   that controls one, using the login already saved in the Home Assistant plugin.
 - **Undo:** every apply takes a backup, and `restore_backup` puts things back.
@@ -70,7 +72,8 @@ Just describe what you want. Under the hood, the agent:
 1. calls `get_overview` and `show_profile` to see your devices and keys;
 2. uses `list_actions` / `describe_action` to find the right action and learn its settings;
 3. stages edits with `set_key`, `add_child`, `manage_profile` and so on;
-4. calls `preview_changes`, shows you the diff, and waits for your OK;
+4. calls `preview_changes` (and `render_profile` for a picture), shows you the result, and waits for your
+   OK;
 5. calls `apply_changes`, which restarts OpenDeck for a few seconds and reports the backup id.
 
 Small tweaks skip all that. Changing an existing key's title, image or settings on the profile a
@@ -155,7 +158,7 @@ folder, which `undo_live` replays.
 
 | Kind | Tools |
 |---|---|
-| Read | `get_overview`, `show_profile`, `list_actions`, `describe_action`, `get_plugin_settings`, `read_logs`, `get_app_rules`, `find_plugins`, `preview_changes`, `list_backups` |
+| Read | `get_overview`, `show_profile`, `render_profile`, `list_actions`, `describe_action`, `get_plugin_settings`, `read_logs`, `get_app_rules`, `find_plugins`, `preview_changes`, `list_backups` |
 | Stage | `set_key`, `update_key`, `clear_key`, `move_key`, `add_child`, `remove_child`, `set_multi_delays`, `manage_profile`, `set_app_rule`, `set_plugin_settings`, `stage_plugin`, `discard_changes`, `set_device_layout` |
 | Apply | `apply_changes`, `restore_backup`, `undo_live` |
 | Home Assistant | `ha_search`, `ha_describe_entity`, `ha_call_service` |

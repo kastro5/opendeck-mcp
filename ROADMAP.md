@@ -81,7 +81,7 @@ can be added the same way later.
 
 **Effort:** medium.
 
-### A3. Rendered preview image of a profile ⭐
+### A3. Rendered preview image of a profile ⭐ — done in 0.2.0
 
 **What:** `render_profile(device, profile, staged=true)` returns a PNG of the deck as it will look: icons,
 titles (font, colour, alignment, stroke), background colours, the wide key, dials.
@@ -223,6 +223,10 @@ also targets the D200X.
   and `uni` have lowercase aliases.
 - httpx logs full URLs at INFO, and GitHub download URLs carry signed tokens, so keep it at WARNING.
 - MCP SDK 2.x: `from mcp.server.mcpserver import MCPServer` (FastMCP was renamed).
+- Some plugin icons are 16-bit greyscale PNGs (Home Assistant's): Pillow's plain `convert("RGBA")` turns
+  them solid white, so scale to 8 bits first.
+- OpenDeck's title fonts are compiled into its executable; Liberation Sans/Serif are Arimo/Tinos, and all
+  of them are in the google/fonts repository.
 - On Windows, `homeassistant.local` takes ~3 s to resolve because the IPv6 lookup fails slowly; the
   server resolves IPv4 once for plain-http `.local` hosts. Zigbee lights report their new state after
   a service call returns, so read the state back rather than trusting the call's response.
