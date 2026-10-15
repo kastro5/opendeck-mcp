@@ -143,7 +143,7 @@ Input keys behind `confirm`. **Effort:** small.
   Bearer <token>"`.
 - Concurrency: the plan lock already serialises sessions.
 
-### B2. OpenDeck plugin version — done (unreleased)
+### B2. OpenDeck plugin version — done in 0.4.0
 
 Built as planned below, with these differences:
 - The token stays in the data folder (shared with `serve`), not in plugin settings, which

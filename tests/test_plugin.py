@@ -215,3 +215,23 @@ def test_bare_exe_names_never_match_a_plugin_folder(paths, monkeypatch, tmp_path
     monkeypatch.chdir(paths.plugins_dir)
     assert process._norm("Registry") == ""
     assert process._norm(str(tmp_path)) != ""
+
+
+def test_plugin_finds_the_opendeck_that_started_it(tmp_path, monkeypatch):
+    monkeypatch.delenv("OPENDECK_CONFIG_DIR", raising=False)
+    monkeypatch.delenv("OPENDECK_EXE", raising=False)
+    exe = tmp_path / "cfg" / "plugins" / "dev.kastro5.opendeck-mcp.sdPlugin" / "bin" / "windows" / "p.exe"
+    P.locate_opendeck(str(exe), str(tmp_path / "Somewhere" / "OpenDeck.exe"))
+    import os
+
+    assert os.environ["OPENDECK_CONFIG_DIR"] == str((tmp_path / "cfg").resolve())
+    assert os.environ["OPENDECK_EXE"] == str(tmp_path / "Somewhere" / "OpenDeck.exe")
+
+
+def test_plugin_leaves_discovery_alone_outside_a_plugin_folder(tmp_path, monkeypatch):
+    monkeypatch.delenv("OPENDECK_CONFIG_DIR", raising=False)
+    monkeypatch.delenv("OPENDECK_EXE", raising=False)
+    P.locate_opendeck(str(tmp_path / "dist" / "x" / "y" / "z" / "p.exe"), str(tmp_path / "explorer.exe"))
+    import os
+
+    assert "OPENDECK_CONFIG_DIR" not in os.environ and "OPENDECK_EXE" not in os.environ

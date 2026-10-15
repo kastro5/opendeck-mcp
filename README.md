@@ -59,14 +59,14 @@ You need OpenDeck 2.14, [uv](https://docs.astral.sh/uv/) and Claude Code (or ano
 below). uv fetches a suitable Python by itself.
 
 ```sh
-claude mcp add opendeck --scope user -- uvx opendeck-mcp@0.3.1
+claude mcp add opendeck --scope user -- uvx opendeck-mcp@0.4.0
 ```
 
 Then restart Claude Code and ask it something like *"what's on my OpenDeck?"*.
 
 It's on [PyPI](https://pypi.org/project/opendeck-mcp/) and in the
 [MCP Registry](https://registry.modelcontextprotocol.io) as `io.github.kastro5/opendeck-mcp`. To run
-straight from GitHub instead: `uvx --from git+https://github.com/kastro5/opendeck-mcp@v0.3.1 opendeck-mcp`.
+straight from GitHub instead: `uvx --from git+https://github.com/kastro5/opendeck-mcp@v0.4.0 opendeck-mcp`.
 
 OpenDeck's folders are found automatically. If yours live somewhere unusual, override them with
 environment variables (`claude mcp add … -e NAME=value`):
@@ -86,7 +86,7 @@ The version is pinned in the command, so replace the registration with the new t
 
 ```sh
 claude mcp remove opendeck --scope user
-claude mcp add opendeck --scope user -- uvx opendeck-mcp@0.3.1
+claude mcp add opendeck --scope user -- uvx opendeck-mcp@0.4.0
 ```
 
 The first apply after an upgrade also updates the companion bridge plugin (see
@@ -102,7 +102,7 @@ Cursor, VS Code and others) is:
   "mcpServers": {
     "opendeck": {
       "command": "uvx",
-      "args": ["opendeck-mcp@0.3.1"]
+      "args": ["opendeck-mcp@0.4.0"]
     }
   }
 }
@@ -119,8 +119,8 @@ in; every request also needs a token.
 On the OpenDeck PC (Windows):
 
 ```sh
-uvx opendeck-mcp@0.3.1 install-autostart --host <tailscale-ip>
-uvx opendeck-mcp@0.3.1 token --host <tailscale-ip>
+uvx opendeck-mcp@0.4.0 install-autostart --host <tailscale-ip>
+uvx opendeck-mcp@0.4.0 token --host <tailscale-ip>
 ```
 
 The first command puts a small script in your Startup folder that starts the server, without a
@@ -146,7 +146,8 @@ claude mcp add --transport http opendeck http://<tailscale-ip>:8765/mcp --header
 The same server also comes as an OpenDeck plugin, which needs neither uv nor a terminal:
 OpenDeck starts and stops it, and it serves MCP over HTTP. Windows and Linux; macOS isn't built.
 
-1. Download `dev.kastro5.opendeck-mcp.sdPlugin.zip` from the
+1. Install **OpenDeck MCP** from OpenDeck's plugin store once it's listed there, or download
+   `dev.kastro5.opendeck-mcp.sdPlugin.zip` from the
    [latest release](https://github.com/kastro5/opendeck-mcp/releases/latest), extract it into
    OpenDeck's `plugins` folder (`%APPDATA%\opendeck\plugins` on Windows) and restart OpenDeck.
 2. In OpenDeck's **Plugins** tab, click the gear next to **OpenDeck MCP**. A page opens in your
@@ -168,6 +169,9 @@ Differences from the `uvx` server:
   port: the second one can't listen, and the gear page (and `get_overview`) says so.
 - It can't update or remove itself; do that from OpenDeck's Plugins tab.
 - The Linux build is compiled and smoke-tested in CI but hasn't been tried on a real deck.
+- Not for the Flatpak build of OpenDeck: applying needs to restart OpenDeck from outside its
+  sandbox, so the plugin refuses to apply there.
+- The executable isn't code-signed, so antivirus software may ask about it the first time.
 
 ## Using it
 

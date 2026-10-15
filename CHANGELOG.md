@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.4.0 — 2026-10-15
 
 - **OpenDeck plugin.** The server also ships as an OpenDeck plugin
   (`dev.kastro5.opendeck-mcp.sdPlugin`, Windows and Linux) that needs no uv or terminal. OpenDeck
@@ -11,6 +11,9 @@
   installed alongside it.
 - Stopping OpenDeck no longer mistakes system processes that report a bare name (Windows'
   "Registry") for plugins when run from a plugin's folder.
+
+Upgrading: re-register with `uvx opendeck-mcp@0.4.0` (see the README). The plugin is a separate,
+optional install.
 
 ## 0.3.1 — 2026-10-15
 

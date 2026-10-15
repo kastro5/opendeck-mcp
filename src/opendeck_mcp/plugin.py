@@ -20,9 +20,11 @@ import json
 import logging
 import os
 import socket
+import sys
 import threading
 import time
 from datetime import UTC, datetime
+from pathlib import Path
 from typing import Any
 
 from . import __version__
@@ -259,6 +261,29 @@ class Plugin:
         log.info("OpenDeck closed the connection; exiting")
 
 
+def locate_opendeck(executable: str | None = None, parent_exe: str | None = None) -> None:
+    """Point discovery at the OpenDeck that started us rather than at default install paths.
+
+    The config folder is where the plugin sits (<config>/plugins/<id>.sdPlugin/bin/<os>/<exe>), and
+    the executable is our parent process. Both go into the environment, so the apply helper inherits
+    them. Explicit OPENDECK_* settings win.
+    """
+    if "OPENDECK_CONFIG_DIR" not in os.environ and (executable or getattr(sys, "frozen", False)):
+        here = Path(executable or sys.executable).resolve()
+        if len(here.parents) > 4 and here.parents[3].name == "plugins":
+            os.environ["OPENDECK_CONFIG_DIR"] = str(here.parents[4])
+    if "OPENDECK_EXE" not in os.environ:
+        if parent_exe is None:
+            import psutil
+
+            try:
+                parent_exe = psutil.Process().parent().exe()
+            except (psutil.Error, AttributeError, OSError):
+                parent_exe = None
+        if parent_exe and Path(parent_exe).stem.lower() == "opendeck":
+            os.environ["OPENDECK_EXE"] = parent_exe
+
+
 def main(argv: list[str]) -> None:
     parser = argparse.ArgumentParser(prog="opendeck-mcp (OpenDeck plugin)")
     parser.add_argument("-port", type=int, required=True)
@@ -275,10 +300,12 @@ def main(argv: list[str]) -> None:
         info = json.loads(args.info)
     except ValueError:
         info = {}
+    locate_opendeck()
     paths = discover()
     paths.data_dir.mkdir(parents=True, exist_ok=True)
     plugin = Plugin(paths, args.pluginUUID, info)
-    log.info("opendeck-mcp %s starting as plugin %s", __version__, args.pluginUUID)
+    log.info("opendeck-mcp %s starting as plugin %s (config %s, exe %s)", __version__, args.pluginUUID,
+             paths.config_dir, paths.exe)
     try:
         asyncio.run(plugin.run(args.port, args.registerEvent))
     finally:

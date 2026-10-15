@@ -71,6 +71,11 @@ def _spawn(command: list[str], log_file: Path) -> None:
 
 def start(paths: Paths, kind: str, **args) -> str:
     """Record the job and start the helper. kind: 'apply' or 'restore'."""
+    if Path("/.flatpak-info").exists():
+        # Everything in a Flatpak sandbox dies with the app, the helper included, which would leave
+        # OpenDeck stopped halfway through.
+        raise RuntimeError("the plugin can't apply changes in Flatpak OpenDeck, because restarting "
+                           "OpenDeck from inside its sandbox isn't possible. Nothing was changed.")
     job_id = uuid.uuid4().hex[:8]
     job = paths.data_dir / "apply_job.json"
     atomic_write(job, json.dumps({"id": job_id, "kind": kind, "args": args}).encode())

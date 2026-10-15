@@ -23,7 +23,7 @@ jobs:
           - os: windows-latest
             name: windows
             exe: opendeck-mcp-plugin.exe
-          - os: ubuntu-latest
+          - os: ubuntu-22.04 # the oldest glibc on offer, so the binary runs on older distros too
             name: linux
             exe: opendeck-mcp-plugin
     runs-on: ${{ matrix.os }}
