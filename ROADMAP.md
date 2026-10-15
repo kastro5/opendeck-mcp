@@ -202,7 +202,7 @@ also targets the D200X.
   (`me.amankhanna.oacounter`) is a good small test.
 - Dials and touchpoints on a connected D200X.
 - macOS and Linux paths and process handling: written, never run.
-- A GitHub Actions workflow running `pytest` on push (Windows + Linux).
+- ~~A GitHub Actions workflow running `pytest` on push (Windows + Linux).~~ Done: `.github/workflows/tests.yml`.
 
 ### C3. Watch upstream
 
