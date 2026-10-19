@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.4.1 — 2026-10-19
+
+- **Error messages reach the agent.** The MCP SDK replaced any error that wasn't its own `ToolError`
+  with a bare "Error executing tool X", so the agent never saw messages such as "unknown device",
+  "OpenDeck's config folder wasn't found (override with OPENDECK_CONFIG_DIR)" or an apply conflict.
+  They now come through, with secrets redacted.
+- A `Dockerfile` for MCP directories (Glama) that check the server starts and lists its tools.
+
+Upgrading: re-register with `uvx opendeck-mcp@0.4.1`; reinstall the plugin from its new zip.
+
 ## 0.4.0 — 2026-10-15
 
 - **OpenDeck plugin.** The server also ships as an OpenDeck plugin
