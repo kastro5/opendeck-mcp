@@ -8,11 +8,14 @@ from typing import Annotated, Any, Literal
 
 from mcp.server.mcpserver import Image as ImageResult
 from mcp.server.mcpserver import MCPServer
+from mcp.server.mcpserver.exceptions import ToolError
 from mcp.types import ToolAnnotations
 from pydantic import Field
 
 from . import __version__
 from .core.paths import Paths, discover
+from .core.profile import ProfileError
+from .core.secrets import redact_text
 from .runtime import applier, detached
 from .tools import edit_tools, ha_tools, icon_tools, plugin_tools, preview_tools, read_tools
 from .tools.view import View
@@ -54,14 +57,23 @@ _paths: Paths | None = None
 
 
 def tool(**options):
-    """mcp.tool, plus: as the OpenDeck plugin, the first call after a detached apply carries its report."""
+    """mcp.tool, plus:
+    - our errors reach the agent: the SDK replaces any exception that isn't its ToolError with a bare
+      "Error executing tool X", which would hide every "unknown device"/"OpenDeck not found" message;
+    - as the OpenDeck plugin, the first call after a detached apply carries its report.
+    """
     register = mcp.tool(**options)
 
     def decorate(fn):
         @functools.wraps(fn)
         def wrapper(*args, **kwargs):
-            report = detached.take_report(paths()) if detached.active() else None
-            result = fn(*args, **kwargs)
+            report = None
+            try:
+                report = detached.take_report(paths()) if detached.active() else None
+                result = fn(*args, **kwargs)
+            except (ProfileError, RuntimeError, OSError) as exc:
+                message = redact_text(str(exc)) or type(exc).__name__
+                raise ToolError(f"{report}\n\n---\n\n{message}" if report else message) from exc
             if report is None:
                 return result
             if isinstance(result, list):
