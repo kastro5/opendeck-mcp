@@ -7,7 +7,7 @@ import re
 from collections import deque
 
 from ..core import knowledge, pi_scrape
-from ..core.devices import BRIDGE_ID, PLUGIN_ID, bridge_status
+from ..core.devices import OWN_IDS, bridge_status
 from ..core.profile import ARRAY_FOR, ProfileError
 from ..core.render import grid, slot_list
 from ..core.secrets import redact, redact_text
@@ -42,7 +42,7 @@ def get_overview(view: View) -> str:
     lines.append("Plugins: " + ", ".join(
         f"{info.name} {info.version}" + (" [pending install]" if folder in view.catalog.pending else "")
         + (f" [ERROR: {info.error}]" if info.error else "")
-        for folder, info in sorted(plugins.items()) if folder not in (BRIDGE_ID, PLUGIN_ID)))
+        for folder, info in sorted(plugins.items()) if folder not in OWN_IDS))
     lines.append(f"Bridge plugin (records device geometry): {bridge_status(paths)}")
     plugin_line = plugin_status(paths)
     if plugin_line:

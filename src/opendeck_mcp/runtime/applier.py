@@ -9,6 +9,7 @@ verify, and start it again detached.
 from __future__ import annotations
 
 import shutil
+import sys
 from collections.abc import Callable
 from pathlib import Path
 
@@ -173,6 +174,16 @@ def _stop(paths: Paths) -> tuple[bool, list[str]]:
     return True, notes
 
 
+def own_folder(paths: Paths) -> str:
+    """The plugin folder this server runs from, which the detached helper runs from too. An older copy
+    under a previous ID isn't running, so it can be replaced or removed like any plugin."""
+    exe = Path(sys.executable).resolve()
+    try:
+        return exe.relative_to(paths.plugins_dir.resolve()).parts[0]
+    except ValueError:
+        return PLUGIN_ID
+
+
 def apply(paths: Paths, confirm: bool, show_window: bool, on_conflict: str, allow_untested_version: bool,
           start_if_stopped: bool = False, detach: Callable[[], str] | None = None) -> str:
     """detach: once every check has passed, hand the actual apply to this instead (the plugin build,
@@ -194,7 +205,7 @@ def apply(paths: Paths, confirm: bool, show_window: bool, on_conflict: str, allo
             return (preview + "\n\nNot applied yet. Show this to the user; once they agree, call apply_changes "
                               "again with confirm=true.")
         if detach:
-            if any(r["args"].get("folder") == PLUGIN_ID for r in records):
+            if any(r["args"].get("folder") == own_folder(paths) for r in records):
                 raise ProfileError("this server runs as the OpenDeck MCP plugin, so it can't replace or remove "
                                    "itself; discard that op and update the plugin from OpenDeck's Plugins tab")
             return detach()
@@ -254,7 +265,7 @@ def restore(paths: Paths, backup_id: str, confirm: bool, show_window: bool,
                     f"(later edits to them are undone too; a backup of the current state is taken first):\n"
                     f"{listing}\n\nCall restore_backup again with confirm=true once the user agrees.")
         if detach:
-            if any(e["rel"].startswith(f"plugins/{PLUGIN_ID}") for e in backup.meta["entries"]):
+            if any(e["rel"].startswith(f"plugins/{own_folder(paths)}") for e in backup.meta["entries"]):
                 raise ProfileError("that backup includes the OpenDeck MCP plugin itself, which can't be "
                                    "restored while it's running; restore it with the uvx server instead")
             return detach()

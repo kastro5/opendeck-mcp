@@ -101,7 +101,7 @@ def test_apply_and_restore_round_trip(paths):
     written = json.loads(profile.profile_path(paths, DEV, "Default").read_text(encoding="utf-8"))
     assert written["keys"][5]["states"][0]["text"] == "New"
     assert profile.profile_path(paths, DEV, "Folder/Extra").exists()
-    assert (paths.plugins_dir / "dev.kastro5.opendeck-mcp-bridge.sdPlugin" / "manifest.json").exists()
+    assert (paths.plugins_dir / "io.github.kastro5.opendeck-mcp-bridge.sdPlugin" / "manifest.json").exists()
     assert not list(paths.config_dir.rglob("*.mcptmp"))
     assert plan.load(paths)["ops"] == []
 
@@ -109,7 +109,7 @@ def test_apply_and_restore_round_trip(paths):
     applier.restore(paths, backup_id, confirm=True, show_window=False)
     after = {p: p.read_bytes() for p in paths.profiles_dir.rglob("*.json")}
     assert after == before
-    assert not (paths.plugins_dir / "dev.kastro5.opendeck-mcp-bridge.sdPlugin").exists()
+    assert not (paths.plugins_dir / "io.github.kastro5.opendeck-mcp-bridge.sdPlugin").exists()
 
 
 def test_invalid_change_is_refused(paths):

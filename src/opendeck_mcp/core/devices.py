@@ -17,9 +17,13 @@ from .jsonio import read_json
 from .paths import Paths
 from .profile import ProfileError, list_devices, list_profiles, load_profile, selected_profile
 
-BRIDGE_ID = "dev.kastro5.opendeck-mcp-bridge.sdPlugin"
+BRIDGE_ID = "io.github.kastro5.opendeck-mcp-bridge.sdPlugin"
 # The plugin build of opendeck-mcp records the same data, so it replaces the bridge.
-PLUGIN_ID = "dev.kastro5.opendeck-mcp.sdPlugin"
+PLUGIN_ID = "io.github.kastro5.opendeck-mcp.sdPlugin"
+# Before 0.5.0 both used dev.kastro5.*, a domain we don't own. Installs of those keep working.
+LEGACY_BRIDGE_IDS = ("dev.kastro5.opendeck-mcp-bridge.sdPlugin",)
+LEGACY_PLUGIN_IDS = ("dev.kastro5.opendeck-mcp.sdPlugin",)
+OWN_IDS = (BRIDGE_ID, PLUGIN_ID, *LEGACY_BRIDGE_IDS, *LEGACY_PLUGIN_IDS)
 
 # device-id prefix -> (rows, columns, name)
 KNOWN = {
@@ -115,7 +119,8 @@ def parse_slot(text: str, layout: DeviceLayout) -> SlotRef:
 
 def _bridge_devices(paths: Paths) -> dict[str, Any]:
     devices: dict[str, Any] = {}
-    for folder in (BRIDGE_ID, PLUGIN_ID):  # the plugin's record wins: it's the one still running
+    # Later records win: current over legacy, and the plugin's over the bridge's (it's the one still running).
+    for folder in (*LEGACY_BRIDGE_IDS, BRIDGE_ID, *LEGACY_PLUGIN_IDS, PLUGIN_ID):
         try:
             devices.update(read_json(paths.settings_dir / f"{folder}.json").get("devices") or {})
         except (OSError, ValueError, AttributeError):
@@ -124,7 +129,7 @@ def _bridge_devices(paths: Paths) -> dict[str, Any]:
 
 
 def plugin_installed(paths: Paths) -> bool:
-    return (paths.plugins_dir / PLUGIN_ID).is_dir()
+    return any((paths.plugins_dir / folder).is_dir() for folder in (PLUGIN_ID, *LEGACY_PLUGIN_IDS))
 
 
 def _overrides(paths: Paths) -> dict[str, Any]:
@@ -137,8 +142,7 @@ def _overrides(paths: Paths) -> dict[str, Any]:
 def bridge_status(paths: Paths) -> str:
     if plugin_installed(paths):
         return "not needed (the OpenDeck MCP plugin records it)"
-    plugin = paths.plugins_dir / BRIDGE_ID
-    if not plugin.is_dir():
+    if not any((paths.plugins_dir / folder).is_dir() for folder in (BRIDGE_ID, *LEGACY_BRIDGE_IDS)):
         return "not installed"
     return "installed" + (", reporting" if _bridge_devices(paths) else ", no data yet (restart OpenDeck)")
 

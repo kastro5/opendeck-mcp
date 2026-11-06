@@ -157,7 +157,7 @@ Built as planned below, with these differences:
   paths. The helper also restarts OpenDeck if anything fails, since nothing else will.
 
 
-Same core code, launched by OpenDeck as a plugin (e.g. `dev.kastro5.opendeck-mcp.sdPlugin`).
+Same core code, launched by OpenDeck as a plugin (e.g. `io.github.kastro5.opendeck-mcp.sdPlugin`).
 
 - **Transport:** HTTP (B1) on `127.0.0.1` by default, with an option for a LAN or Tailscale address.
   Generate the token on first run and store it in the plugin's global settings.

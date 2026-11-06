@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.5.0 — 2026-11-06
+
+- **New plugin IDs: `io.github.kastro5.opendeck-mcp` and `io.github.kastro5.opendeck-mcp-bridge`.**
+  The `dev.kastro5` ones implied a domain this project doesn't own; `io.github.kastro5` is tied to
+  the GitHub account, like the MCP Registry name. Installs under the old IDs keep working: their
+  device records are still read, the plugin carries its address and port over, the next apply
+  replaces an old bridge, and an old plugin copy can be removed from the agent like any other.
+  Remove the old OpenDeck MCP plugin in OpenDeck's Plugins tab when installing the new one; while
+  both are there, the new one says the port is taken by the old one.
+
+Upgrading: re-register with `uvx opendeck-mcp@0.5.0`; install the plugin from its new zip.
+
 ## 0.4.1 — 2026-10-19
 
 - **Error messages reach the agent.** The MCP SDK replaced any error that wasn't its own `ToolError`

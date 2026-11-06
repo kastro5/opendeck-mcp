@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from ..core.devices import BRIDGE_ID
+from ..core.devices import OWN_IDS
 from ..core.paths import Paths
 from ..core.profile import ProfileError
 from ..plugins import catalogue, installer
@@ -17,7 +17,7 @@ def find_plugins(paths: Paths, query: str | None, source: str, limit: int) -> st
     installed = {folder.removesuffix(".sdPlugin"): info for folder, info in view.catalog.plugins.items()}
     if source == "installed":
         rows = [f"- {info.name} {info.version} [{folder}]" + (" (built in)" if folder in BUILTIN else "")
-                for folder, info in sorted(view.catalog.plugins.items()) if folder != BRIDGE_ID
+                for folder, info in sorted(view.catalog.plugins.items()) if folder not in OWN_IDS
                 and (not query or query.lower() in f"{folder} {info.name}".lower())]
         return "\n".join(rows) or "No matching installed plugins."
     listings = catalogue.archive(paths) if source == "archive" else catalogue.openaction(paths)
@@ -50,7 +50,7 @@ def _listing(paths: Paths, plugin_id: str, source: str) -> catalogue.Listing:
 def stage_plugin(paths: Paths, operation: str, plugin_id: str, source: str, url: str | None,
                  confirm: bool) -> str:
     folder_id = plugin_id if plugin_id.endswith(".sdPlugin") else plugin_id + ".sdPlugin"
-    if folder_id in BUILTIN or folder_id == BRIDGE_ID:
+    if folder_id in BUILTIN or folder_id in OWN_IDS:
         raise ProfileError(f"{folder_id} is managed by OpenDeck / opendeck-mcp and can't be changed here")
     view = View(paths)
     if operation == "remove":

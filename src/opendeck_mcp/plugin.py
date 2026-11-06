@@ -29,7 +29,8 @@ from typing import Any
 
 from . import __version__
 from . import http as H
-from .core.jsonio import atomic_write
+from .core.devices import LEGACY_PLUGIN_IDS
+from .core.jsonio import atomic_write, read_json
 from .core.paths import Paths, discover
 from .runtime import detached
 
@@ -130,8 +131,11 @@ class Listener:
             sock.listen(128)
         except OSError as exc:
             sock.close()
-            reason = ("the port is already in use (is `opendeck-mcp serve` running on it?)"
-                      if exc.errno in (98, 48, 10048) else
+            old = [legacy for legacy in LEGACY_PLUGIN_IDS if (self.paths.plugins_dir / legacy).is_dir()]
+            busy = (f"the port is already in use, probably by the older copy of this plugin ({old[0]}); "
+                    "remove it in OpenDeck's Plugins tab" if old else
+                    "the port is already in use (is `opendeck-mcp serve` running on it?)")
+            reason = (busy if exc.errno in (98, 48, 10048) else
                       "that address isn't on this computer" if exc.errno in (99, 49, 10049) else str(exc))
             self._report("error", f"can't listen on {config['host']}:{config['port']}: {reason}")
             return
@@ -186,7 +190,20 @@ class Plugin:
             log.error("stored server settings are invalid (%s); using the defaults", exc)
             return dict(DEFAULT_SERVER)
 
+    def legacy_settings(self) -> dict:
+        """Settings stored under an older ID of this plugin, which OpenDeck keeps per ID."""
+        for legacy in LEGACY_PLUGIN_IDS:
+            try:
+                stored = read_json(self.paths.settings_dir / f"{legacy}.json")
+            except (OSError, ValueError):
+                continue
+            if isinstance(stored, dict) and stored:
+                log.info("carried over the settings of %s", legacy)
+                return stored
+        return {}
+
     async def loaded(self, stored: dict) -> None:
+        stored = stored or self.legacy_settings()
         devices = {d: {**v, "connected": False} for d, v in (stored.get("devices") or {}).items()}
         for device in self.info.get("devices") or []:
             devices[device["id"]] = _device(device)

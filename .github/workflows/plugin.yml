@@ -1,4 +1,4 @@
-# Build the OpenDeck plugin (dev.kastro5.opendeck-mcp.sdPlugin) and attach it to the GitHub release.
+# Build the OpenDeck plugin (io.github.kastro5.opendeck-mcp.sdPlugin) and attach it to the GitHub release.
 #
 # Each OS freezes its own binary; one zip then carries both, so the same download works on Windows
 # and Linux (manifest CodePathWin / CodePathLin). On a v* tag the zip goes on that tag's release

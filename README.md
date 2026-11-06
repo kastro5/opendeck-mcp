@@ -59,14 +59,14 @@ You need OpenDeck 2.14, [uv](https://docs.astral.sh/uv/) and Claude Code (or ano
 below). uv fetches a suitable Python by itself.
 
 ```sh
-claude mcp add opendeck --scope user -- uvx opendeck-mcp@0.4.1
+claude mcp add opendeck --scope user -- uvx opendeck-mcp@0.5.0
 ```
 
 Then restart Claude Code and ask it something like *"what's on my OpenDeck?"*.
 
 It's on [PyPI](https://pypi.org/project/opendeck-mcp/) and in the
 [MCP Registry](https://registry.modelcontextprotocol.io) as `io.github.kastro5/opendeck-mcp`. To run
-straight from GitHub instead: `uvx --from git+https://github.com/kastro5/opendeck-mcp@v0.4.1 opendeck-mcp`.
+straight from GitHub instead: `uvx --from git+https://github.com/kastro5/opendeck-mcp@v0.5.0 opendeck-mcp`.
 
 OpenDeck's folders are found automatically. If yours live somewhere unusual, override them with
 environment variables (`claude mcp add … -e NAME=value`):
@@ -86,7 +86,7 @@ The version is pinned in the command, so replace the registration with the new t
 
 ```sh
 claude mcp remove opendeck --scope user
-claude mcp add opendeck --scope user -- uvx opendeck-mcp@0.4.1
+claude mcp add opendeck --scope user -- uvx opendeck-mcp@0.5.0
 ```
 
 The first apply after an upgrade also updates the companion bridge plugin (see
@@ -102,7 +102,7 @@ Cursor, VS Code and others) is:
   "mcpServers": {
     "opendeck": {
       "command": "uvx",
-      "args": ["opendeck-mcp@0.4.1"]
+      "args": ["opendeck-mcp@0.5.0"]
     }
   }
 }
@@ -119,8 +119,8 @@ in; every request also needs a token.
 On the OpenDeck PC (Windows):
 
 ```sh
-uvx opendeck-mcp@0.4.1 install-autostart --host <tailscale-ip>
-uvx opendeck-mcp@0.4.1 token --host <tailscale-ip>
+uvx opendeck-mcp@0.5.0 install-autostart --host <tailscale-ip>
+uvx opendeck-mcp@0.5.0 token --host <tailscale-ip>
 ```
 
 The first command puts a small script in your Startup folder that starts the server, without a
@@ -147,9 +147,11 @@ The same server also comes as an OpenDeck plugin, which needs neither uv nor a t
 OpenDeck starts and stops it, and it serves MCP over HTTP. Windows and Linux; macOS isn't built.
 
 1. Install **OpenDeck MCP** from OpenDeck's plugin store once it's listed there, or download
-   `dev.kastro5.opendeck-mcp.sdPlugin.zip` from the
+   `io.github.kastro5.opendeck-mcp.sdPlugin.zip` from the
    [latest release](https://github.com/kastro5/opendeck-mcp/releases/latest), extract it into
    OpenDeck's `plugins` folder (`%APPDATA%\opendeck\plugins` on Windows) and restart OpenDeck.
+   Upgrading from before 0.5.0: the plugin's ID changed from `dev.kastro5.opendeck-mcp` to
+   `io.github.kastro5.opendeck-mcp`, so remove the old one in the Plugins tab; its settings carry over.
 2. In OpenDeck's **Plugins** tab, click the gear next to **OpenDeck MCP**. A page opens in your
    browser with the `claude mcp add …` command (token included) and a Copy button. Run it, then
    restart Claude Code.
@@ -326,7 +328,7 @@ folder, which `undo_live` replays.
 - **Undo an apply:** `list_backups`, then `restore_backup`.
 - **Plugin: the gear page says "not serving".** Another program holds the port, usually
   `opendeck-mcp serve` on the same address. Pick another port on the page, or stop the other server
-  (`opendeck-mcp uninstall-autostart`). The plugin's log is `logs\plugins\dev.kastro5.opendeck-mcp.sdPlugin.log`
+  (`opendeck-mcp uninstall-autostart`). The plugin's log is `logs\plugins\io.github.kastro5.opendeck-mcp.sdPlugin.log`
   in OpenDeck's log folder.
 - **HTTP client gets 401 / 421.** 401: wrong or missing token (`opendeck-mcp token`). 421: the client
   used a host name the server doesn't know; add it with `--allowed-host`. The server logs to

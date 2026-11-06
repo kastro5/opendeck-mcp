@@ -69,10 +69,10 @@ def test_plugin_registers_records_devices_and_starts_the_listener(paths, monkeyp
     import websockets
 
     monkeypatch.setattr(websockets, "connect", lambda *a, **k: socket)
-    plugin = P.Plugin(paths, "dev.kastro5.opendeck-mcp.sdPlugin", info)
+    plugin = P.Plugin(paths, "io.github.kastro5.opendeck-mcp.sdPlugin", info)
     asyncio.run(plugin.run(57116, "registerPlugin"))
 
-    assert socket.sent[0] == {"event": "registerPlugin", "uuid": "dev.kastro5.opendeck-mcp.sdPlugin"}
+    assert socket.sent[0] == {"event": "registerPlugin", "uuid": "io.github.kastro5.opendeck-mcp.sdPlugin"}
     assert socket.sent[1]["event"] == "getGlobalSettings"
     saved = socket.sent[-1]["payload"]
     assert saved["devices"]["old-deck"]["connected"] is False  # remembered, not yet seen this run
@@ -81,7 +81,7 @@ def test_plugin_registers_records_devices_and_starts_the_listener(paths, monkeyp
     assert started == [{"host": "127.0.0.1", "port": 8800, "allowed_hosts": []}]
 
     # devices.py reads the plugin's record like the bridge's
-    settings = paths.settings_dir / "dev.kastro5.opendeck-mcp.sdPlugin.json"
+    settings = paths.settings_dir / "io.github.kastro5.opendeck-mcp.sdPlugin.json"
     settings.write_text(json.dumps(saved), encoding="utf-8")
     assert layouts(paths)["other"].columns == 2
 
@@ -220,7 +220,7 @@ def test_bare_exe_names_never_match_a_plugin_folder(paths, monkeypatch, tmp_path
 def test_plugin_finds_the_opendeck_that_started_it(tmp_path, monkeypatch):
     monkeypatch.delenv("OPENDECK_CONFIG_DIR", raising=False)
     monkeypatch.delenv("OPENDECK_EXE", raising=False)
-    exe = tmp_path / "cfg" / "plugins" / "dev.kastro5.opendeck-mcp.sdPlugin" / "bin" / "windows" / "p.exe"
+    exe = tmp_path / "cfg" / "plugins" / "io.github.kastro5.opendeck-mcp.sdPlugin" / "bin" / "windows" / "p.exe"
     P.locate_opendeck(str(exe), str(tmp_path / "Somewhere" / "OpenDeck.exe"))
     import os
 

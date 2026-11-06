@@ -1,4 +1,4 @@
-"""Build the OpenDeck plugin (dev.kastro5.opendeck-mcp.sdPlugin).
+"""Build the OpenDeck plugin (io.github.kastro5.opendeck-mcp.sdPlugin).
 
     uv run --with pyinstaller python scripts/build_plugin.py build      # this OS's binary -> build/bins/<os>/
     uv run python scripts/build_plugin.py package [--bins build/bins]   # -> dist/<plugin>.zip
@@ -20,7 +20,7 @@ import zipfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-PLUGIN = "dev.kastro5.opendeck-mcp.sdPlugin"
+PLUGIN = "io.github.kastro5.opendeck-mcp.sdPlugin"
 NAME = "opendeck-mcp-plugin"
 OSES = {"win32": "windows", "linux": "linux"}
 

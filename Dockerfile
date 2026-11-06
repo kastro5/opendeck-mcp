@@ -6,6 +6,6 @@
 # OpenDeck's folders weren't found.
 FROM python:3.13-slim
 
-RUN pip install --no-cache-dir opendeck-mcp==0.4.1
+RUN pip install --no-cache-dir opendeck-mcp==0.5.0
 
 ENTRYPOINT ["opendeck-mcp"]

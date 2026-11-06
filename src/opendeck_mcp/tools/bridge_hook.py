@@ -7,7 +7,7 @@ from importlib import resources
 from pathlib import Path
 
 from .. import __version__
-from ..core.devices import BRIDGE_ID, plugin_installed
+from ..core.devices import BRIDGE_ID, LEGACY_BRIDGE_IDS, plugin_installed
 from ..core.jsonio import read_json
 from ..core.paths import Paths
 
@@ -40,8 +40,14 @@ def bridge_records(paths: Paths, records: list[dict], current: dict) -> list[dic
     if any(r["op"] == "install_bridge" for r in records):
         return []
     source = prepare_source(paths)
-    return [{"id": f"op{current['next_id']}", "op": "install_bridge", "pre": {},
-             "args": {"folder": BRIDGE_ID, "source": str(source), "version": __version__}}]
+    out = [{"id": f"op{current['next_id']}", "op": "install_bridge", "pre": {},
+            "args": {"folder": BRIDGE_ID, "source": str(source), "version": __version__}}]
+    # A bridge under the old ID would keep running alongside the new one.
+    for legacy in LEGACY_BRIDGE_IDS:
+        if (paths.plugins_dir / legacy).is_dir():
+            out.append({"id": f"op{current['next_id'] + len(out)}", "op": "remove_plugin", "pre": {},
+                        "args": {"folder": legacy}})
+    return out
 
 
 def remove_cached(path: Path) -> None:
